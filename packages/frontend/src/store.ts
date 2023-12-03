@@ -418,27 +418,27 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	sound_note: {
 		where: 'device',
-		default: { type: 'gengyou/New-Posts-ririse', volume: 1 } as SoundStore,
+		default: { type: 'cx/New-Posts-ririse', volume: 1 } as SoundStore,
 	},
 	sound_noteMy: {
 		where: 'device',
-		default: { type: 'gengyou/New-My-Posts-ririse', volume: 1 } as SoundStore,
+		default: { type: 'cx/New-My-Posts-ririse', volume: 1 } as SoundStore,
 	},
 	sound_notification: {
 		where: 'device',
-		default: { type: 'gengyou/Notice-ririse', volume: 1 } as SoundStore,
+		default: { type: 'cx/Notice-ririse', volume: 1 } as SoundStore,
 	},
 	sound_antenna: {
 		where: 'device',
-		default: { type: 'gengyou/New-Antenna-Posts-ririse', volume: 1 } as SoundStore,
+		default: { type: 'cx/New-Antenna-Posts-ririse', volume: 1 } as SoundStore,
 	},
 	sound_channel: {
 		where: 'device',
-		default: { type: 'gengyou/New-Channel-Posts-ririse', volume: 1 } as SoundStore,
+		default: { type: 'cx/New-Channel-Posts-ririse', volume: 1 } as SoundStore,
 	},
 	sound_reaction: {
 		where: 'device',
-		default: { type: 'gengyou/Our-Shinano', volume: 1 } as SoundStore,
+		default: { type: 'cx/Our-Shinano', volume: 1 } as SoundStore,
 	},
 }));
 
