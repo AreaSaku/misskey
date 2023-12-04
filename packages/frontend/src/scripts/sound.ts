@@ -43,6 +43,8 @@ export const soundsTypes = [
 	'kq/Police-alert-sound',
 	'keikyu/siemens-gto',
 	'keikyu/pass',
+	'nagoya/higashiyama-f',
+	'nagoya/higashiyama-t',
 	'nagoya/meijo-r',
 	'nagoya/meijo-l',
 	'syuilo/n-aec',
@@ -86,6 +88,16 @@ export const soundsTypes = [
 	'syuilo/kick',
 	'syuilo/snare',
 	'syuilo/queue-jammed',
+	'aisha/1',
+	'aisha/2',
+	'aisha/3',
+	'noizenecio/kick_gaba1',
+	'noizenecio/kick_gaba2',
+	'noizenecio/kick_gaba3',
+	'noizenecio/kick_gaba4',
+	'noizenecio/kick_gaba5',
+	'noizenecio/kick_gaba6',
+	'noizenecio/kick_gaba7',
 ] as const;
 
 export const operationTypes = [
@@ -177,7 +189,7 @@ export function play(operationType: OperationType) {
 	if (sound.type == null || !canPlay) return;
 
 	canPlay = false;
-	playFile(sound).then(() => {
+	playFile(sound).finally(() => {
 		// ごく短時間に音が重複しないように
 		setTimeout(() => {
 			canPlay = true;
