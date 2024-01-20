@@ -93,7 +93,7 @@ export const soundsTypes = [
 	'syuilo/ryukyu',
 	'syuilo/kick',
 	'syuilo/snare',
-	'syuilo/queue-jamme
+	'syuilo/queue-jammed',
 ] as const;
 
 export const operationTypes = [
