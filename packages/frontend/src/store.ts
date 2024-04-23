@@ -7,7 +7,6 @@ import { markRaw, ref } from 'vue';
 import * as Misskey from 'misskey-js';
 import { miLocalStorage } from './local-storage.js';
 import type { SoundType } from '@/scripts/sound.js';
-import type { BuiltinTheme as ShikiBuiltinTheme } from 'shiki';
 import { Storage } from '@/pizzax.js';
 import { hemisphere } from '@/scripts/intl-const.js';
 
@@ -443,6 +442,18 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: true,
 	},
+	useNativeUIForVideoAudioPlayer: {
+		where: 'device',
+		default: false,
+	},
+	keepOriginalFilename: {
+		where: 'device',
+		default: true,
+	},
+	alwaysConfirmFollow: {
+		where: 'device',
+		default: true,
+	},
 
 	sound_masterVolume: {
 		where: 'device',
@@ -478,7 +489,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	sound_reaction: {
 		where: 'device',
-		default: { type: 'cx/Our-Shinano', volume: 1 } as SoundStore,
+		default: { type: 'kq/Police-alert', volume: 1 } as SoundStore,
 	},
 }));
 
