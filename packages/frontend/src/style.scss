@@ -88,7 +88,7 @@ html {
 	}
 
 	&.useSystemFont {
-		font-family: system-ui;
+		font-family: "Murecho", sans-serif;
 	}
 }
 
@@ -415,7 +415,7 @@ rt {
 }
 
 ._monospace {
-	font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace !important;
+	font-family: "Murecho", sans-serif;
 }
 
 ._zoom {
