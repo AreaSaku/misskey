@@ -489,7 +489,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	sound_reaction: {
 		where: 'device',
-		default: { type: 'kq/Police-alert', volume: 1 } as SoundStore,
+		default: { type: 'kq/209chime', volume: 1 } as SoundStore,
 	},
 }));
 
