@@ -3285,7 +3285,7 @@ export interface Locale extends ILocale {
      */
     "userInfo": string;
     /**
-     * 不明
+     * オンライン状態を表示する設定に変更して下さい
      */
     "unknown": string;
     /**
@@ -3293,11 +3293,11 @@ export interface Locale extends ILocale {
      */
     "onlineStatus": string;
     /**
-     * オンライン状態を隠す
+     * オンライン状態を隠さないで下さい
      */
     "hideOnlineStatus": string;
     /**
-     * オンライン状態を隠すと、検索などの一部機能において利便性が低下することがあります。
+     * オンライン状態を隠す機能は削除される予定です。
      */
     "hideOnlineStatusDescription": string;
     /**
