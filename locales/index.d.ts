@@ -3285,7 +3285,7 @@ export interface Locale extends ILocale {
      */
     "userInfo": string;
     /**
-     * オンライン状態を表示する設定に変更して下さい
+     * 不明
      */
     "unknown": string;
     /**
@@ -3293,11 +3293,11 @@ export interface Locale extends ILocale {
      */
     "onlineStatus": string;
     /**
-     * オンライン状態を隠さないで下さい
+     * オンライン状態を隠す
      */
     "hideOnlineStatus": string;
     /**
-     * オンライン状態を隠す機能は削除される予定です。
+     * オンライン状態を隠すと、検索などの一部機能において利便性が低下することがあります。
      */
     "hideOnlineStatusDescription": string;
     /**
@@ -5471,6 +5471,14 @@ export interface Locale extends ILocale {
          * 有効にすると、タイムラインがキャッシュされていない場合にDBへ追加で問い合わせを行うフォールバック処理を行います。無効にすると、フォールバック処理を行わないことでさらにサーバーの負荷を軽減することができますが、タイムラインが取得できる範囲に制限が生じます。
          */
         "fanoutTimelineDbFallbackDescription": string;
+        /**
+         * 問い合わせ先URL
+         */
+        "inquiryUrl": string;
+        /**
+         * サーバー運営者へのお問い合わせフォームのURLや、運営者の連絡先等が記載されたWebページのURLを指定します。
+         */
+        "inquiryUrlDescription": string;
     };
     "_accountMigration": {
         /**
