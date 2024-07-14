@@ -67,8 +67,6 @@ export const soundsTypes = [
 export const operationTypes = [
 	'noteMy',
 	'note',
-	'antenna',
-	'channel',
 	'notification',
 	'reaction',
 ] as const;

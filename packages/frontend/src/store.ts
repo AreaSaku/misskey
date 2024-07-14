@@ -479,14 +479,6 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: { type: 'cx/Notice-ririse', volume: 1 } as SoundStore,
 	},
-	sound_antenna: {
-		where: 'device',
-		default: { type: 'cx/New-Antenna-Posts-ririse', volume: 1 } as SoundStore,
-	},
-	sound_channel: {
-		where: 'device',
-		default: { type: 'cx/New-Channel-Posts-ririse', volume: 1 } as SoundStore,
-	},
 	sound_reaction: {
 		where: 'device',
 		default: { type: 'kq/Police-alert', volume: 1 } as SoundStore,
