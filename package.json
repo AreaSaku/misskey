@@ -1,12 +1,12 @@
 {
 	"name": "misskey",
-	"version": "2024.5.0-WKH0.86b",
+	"version": "2024.7.0-beta.1-WKH0.86b",
 	"codename": "nasubi",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/misskey-dev/misskey.git"
 	},
-	"packageManager": "pnpm@9.0.6",
+	"packageManager": "pnpm@9.5.0",
 	"workspaces": [
 		"packages/frontend",
 		"packages/backend",
