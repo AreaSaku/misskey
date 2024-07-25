@@ -454,10 +454,14 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: true,
 	},
+	confirmWhenRevealingSensitiveMedia: {
+		where: 'device',
+		default: false,
+	},
 
 	sound_masterVolume: {
 		where: 'device',
-		default: 1,
+		default: 0.3,
 	},
 	sound_notUseSound: {
 		where: 'device',
