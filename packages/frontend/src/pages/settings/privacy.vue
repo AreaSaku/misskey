@@ -23,10 +23,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
 	</MkSelect>
 
-	<MkSwitch v-model="hideOnlineStatus" @update:modelValue="save()">
-		{{ i18n.ts.hideOnlineStatus }}
-		<template #caption>{{ i18n.ts.hideOnlineStatusDescription }}</template>
-	</MkSwitch>
 	<MkSwitch v-model="noCrawle" @update:modelValue="save()">
 		{{ i18n.ts.noCrawle }}
 		<template #caption>{{ i18n.ts.noCrawleDescription }}</template>
