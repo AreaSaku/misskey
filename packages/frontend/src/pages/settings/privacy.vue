@@ -22,7 +22,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<template #label>{{ i18n.ts.followersVisibility }}</template>
 		<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
 	</MkSelect>
-
 	<MkSwitch v-model="noCrawle" @update:modelValue="save()">
 		{{ i18n.ts.noCrawle }}
 		<template #caption>{{ i18n.ts.noCrawleDescription }}</template>
