@@ -37,6 +37,7 @@ export const soundsTypes = [
 	'r_/myreaction-r_',
 	'r_/unn-r_',
 	'GB2110/kankai',
+	'GB2110/YMU251-D104-unused',
 	'GB2110/5MH601RH18_OP',
 	'GB2110/5MH601RH18_dingdong',
 	'GB2110/5MH601RH18_ED',
