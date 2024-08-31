@@ -4,77 +4,155 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkWindow :initialWidth="640" :initialHeight="402" :canResize="true" :closeButton="true">
-	<template #header>
-		<i class="icon ti ti-brand-youtube" style="margin-right: 0.5em;"></i>
-		<span>{{ title ?? 'YouTube' }}</span>
-	</template>
-
-	<div class="poamfof">
-		<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
-			<div v-if="player.url && (player.url.startsWith('http://') || player.url.startsWith('https://'))" class="player">
-				<iframe v-if="!fetching" :src="transformPlayerUrl(player.url)" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-			</div>
-			<span v-else>invalid url</span>
-		</Transition>
-		<MkLoading v-if="fetching"/>
-		<MkError v-else-if="!player.url" @retry="ytFetch()"/>
-	</div>
-</MkWindow>
+  <div class="mk-youtube-player" :style="{ background: thumbnailUrl ? `url(${thumbnailUrl})` : '#000', backgroundSize: 'cover', backgroundPosition: 'center' }">
+    <div v-if="!isPlaying" class="info">
+      <button class="_button" @click="play" :disabled="!videoId">
+        <i class="ph-play ph-bold ph-lg"></i>
+      </button>
+      <div v-if="error" class="error-message">{{ error }}</div>
+    </div>
+    <div v-else id="youtube-player"></div>
+    <div class="metadata">
+      <h3>{{ videoTitle }}</h3>
+      <p>{{ channelTitle }}</p>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import MkWindow from '@/components/MkWindow.vue';
-import { versatileLang } from '@/scripts/intl-const.js';
-import { transformPlayerUrl } from '@/scripts/player-url-transform.js';
-import { defaultStore } from '@/store.js';
+import { ref, computed, onMounted, watch } from 'vue';
+import YouTubePlayer from 'youtube-player';
 
 const props = defineProps<{
-	url: string;
+  video: {
+    id: string;
+    title: string;
+    channelId: string;
+    channelTitle: string;
+  } | null;
 }>();
 
-const requestUrl = new URL(props.url);
-if (!['http:', 'https:'].includes(requestUrl.protocol)) throw new Error('invalid url');
+const videoId = computed(() => props.video?.id ?? '');
+const videoTitle = computed(() => props.video?.title ?? 'YouTube Video');
+const channelTitle = computed(() => props.video?.channelTitle ?? '');
 
-const fetching = ref(true);
-const title = ref<string | null>(null);
-const player = ref({
-	url: null as string | null,
-	width: null,
-	height: null,
+const thumbnailUrl = computed(() => videoId.value ? `https://img.youtube.com/vi/${videoId.value}/0.jpg` : null);
+const isPlaying = ref(false);
+const error = ref('');
+
+let player: any;
+
+onMounted(() => {
+  initializePlayer();
 });
 
-const ytFetch = (): void => {
-	fetching.value = true;
-	window.fetch(`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${versatileLang}`).then(res => {
-		res.json().then(info => {
-			if (info.url == null) return;
-			title.value = info.title;
-			fetching.value = false;
-			player.value = info.player;
-		});
-	});
-};
+watch(() => props.video, () => {
+  if (player && videoId.value) {
+    player.loadVideoById(videoId.value);
+  }
+});
 
-ytFetch();
+function initializePlayer() {
+  player = YouTubePlayer('youtube-player', {
+    videoId: videoId.value,
+    playerVars: {
+      autoplay: 0,
+      modestbranding: 1,
+      rel: 0,
+    },
+  });
 
+  player.on('ready', () => {
+    console.log('YouTube player is ready');
+  });
+
+  player.on('error', (event: any) => {
+    console.error('YouTube player error:', event);
+    error.value = 'An error occurred while loading the video.';
+  });
+
+  player.on('stateChange', (event: any) => {
+    if (event.data === 1) { // playing
+      isPlaying.value = true;
+    } else if (event.data === 0 || event.data === 2) { // ended or paused
+      isPlaying.value = false;
+    }
+  });
+}
+
+function play() {
+  if (player) {
+    player.playVideo();
+    isPlaying.value = true;
+    error.value = ''; // Clear any previous errors
+  }
+}
+
+// エラーハンドリング関数
+function handleThumbnailError() {
+  console.error('Failed to load thumbnail');
+  error.value = 'Failed to load video thumbnail.';
+}
 </script>
 
-<style lang="scss">
-.poamfof {
-	position: relative;
-	overflow: hidden;
-	height: 100%;
+<style lang="scss" scoped>
+.mk-youtube-player {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; // 16:9 aspect ratio
+  background-color: #000;
 
-	.player {
-		position: absolute;
-		inset: 0;
+  #youtube-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
 
-		iframe {
-			width: 100%;
-			height: 100%;
-		}
-	}
+  .info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+
+    ._button {
+      font-size: 3em;
+      color: #fff;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  }
+
+  .metadata {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+
+    h3 {
+      margin: 0;
+      font-size: 1.2em;
+    }
+
+    p {
+      margin: 5px 0 0;
+      font-size: 0.9em;
+    }
+  }
+
+  .error-message {
+    color: #ff4136;
+    margin-top: 10px;
+  }
 }
 </style>
