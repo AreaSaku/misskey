@@ -199,7 +199,7 @@ host: "ホスト"
 selectSelf: "自分を選択"
 selectUser: "ユーザーを選択"
 recipient: "宛先"
-annotation: "注釈"
+annotation: "注釈※CWは禁止事項に該当する可能性が非常に高く、アカウント削除などの結果が伴う大変危険な行為です。"
 federation: "連合"
 instances: "サーバー"
 registeredAt: "初観測"
@@ -1309,8 +1309,8 @@ _initialAccountSetting:
   accountCreated: "アカウントの作成が完了しました！"
   letsStartAccountSetup: "さっそくアカウントの初期設定を行いましょう。"
   letsFillYourProfile: "まずはあなたのプロフィールを設定しましょう。"
-  profileSetting: "プロフィール設定"
-  privacySetting: "プライバシー設定"
+  profileSetting: "プロフィール設定※アイコンの設定が無い場合はアカウント削除のリスクを伴います。"
+  privacySetting: "プライバシー設定※FFの非公開やオンライン状態を隠すことは出来ません。"
   theseSettingsCanEditLater: "これらの設定は後から変更できます。"
   youCanEditMoreSettingsInSettingsPageLater: "この他にも様々な設定を「設定」ページから行えます。ぜひ後で確認してみてください。"
   followUsers: "タイムラインを構築するため、気になるユーザーをフォローしてみましょう。"
@@ -1367,7 +1367,7 @@ _initialTutorial:
       localOnly: "他のサーバーに投稿を連合しません。上記の公開範囲に関わらず、他のサーバーのユーザーは、この設定がついたノートを直接閲覧することができなくなります。"
     _cw:
       title: "内容を隠す（CW）"
-      description: "本文のかわりに「注釈」に書いた内容が表示されます。「もっと見る」を押すと本文が表示されます。"
+      description: "本文のかわりに「注釈」に書いた内容が表示されます。「もっと見る」を押すと本文が表示されます。そしてアカウントが削除されます。"
       _exampleNote:
         cw: "飯テロ注意"
         note: "チョコのかかったドーナツを食べました🍩😋"
@@ -1387,7 +1387,7 @@ _initialTutorial:
 
 _timelineDescription:
   home: "ホームタイムラインでは、あなたがフォローしているアカウントの投稿を見られます。"
-  local: "ローカルタイムラインでは、このサーバーにいるユーザー全員の投稿を見られます。"
+  local: "ローカルタイムラインでは、このサーバーにいるユーザー全員の投稿を見られます。ユーザーはLTLへの貢献に努める必要があります。"
   social: "ソーシャルタイムラインには、ホームタイムラインとローカルタイムラインの投稿が両方表示されます。"
   global: "グローバルタイムラインでは、接続している他のすべてのサーバーからの投稿を見られます。"
 
@@ -2241,8 +2241,8 @@ _visibility:
   publicDescription: "全てのユーザーに公開"
   home: "ホーム"
   homeDescription: "ホームタイムラインのみに公開"
-  followers: "フォロワー"
-  followersDescription: "自分のフォロワーのみに公開"
+  followers: "フォロ限禁止"
+  followersDescription: "フォロ限禁止"
   specified: "ダイレクト"
   specifiedDescription: "指定したユーザーのみに公開"
   disableFederation: "連合なし"
