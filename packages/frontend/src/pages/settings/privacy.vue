@@ -16,12 +16,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<MkSelect v-model="followingVisibility" @update:modelValue="save()">
 		<template #label>{{ i18n.ts.followingVisibility }}</template>
 		<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
+		<option value="followers">{{ i18n.ts._ffVisibility.followers }}</option>
 	</MkSelect>
 
 	<MkSelect v-model="followersVisibility" @update:modelValue="save()">
 		<template #label>{{ i18n.ts.followersVisibility }}</template>
 		<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
+		<option value="followers">{{ i18n.ts._ffVisibility.followers }}</option>
 	</MkSelect>
+
 	<MkSwitch v-model="noCrawle" @update:modelValue="save()">
 		{{ i18n.ts.noCrawle }}
 		<template #caption>{{ i18n.ts.noCrawleDescription }}</template>

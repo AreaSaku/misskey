@@ -199,7 +199,7 @@ host: "ホスト"
 selectSelf: "自分を選択"
 selectUser: "ユーザーを選択"
 recipient: "宛先"
-annotation: "注釈※CWはアカウント削除などの結果が伴う大変危険な行為です。"
+annotation: "注釈"
 federation: "連合"
 instances: "サーバー"
 registeredAt: "初観測"
@@ -1309,8 +1309,8 @@ _initialAccountSetting:
   accountCreated: "アカウントの作成が完了しました！"
   letsStartAccountSetup: "さっそくアカウントの初期設定を行いましょう。"
   letsFillYourProfile: "まずはあなたのプロフィールを設定しましょう。"
-  profileSetting: "プロフィール設定※アイコンの設定が無い場合はアカウント削除のリスクを伴います。"
-  privacySetting: "プライバシー設定※FFの非公開やオンライン状態を隠すことは出来ません。"
+  profileSetting: "プロフィール設定"
+  privacySetting: "プライバシー設定"
   theseSettingsCanEditLater: "これらの設定は後から変更できます。"
   youCanEditMoreSettingsInSettingsPageLater: "この他にも様々な設定を「設定」ページから行えます。ぜひ後で確認してみてください。"
   followUsers: "タイムラインを構築するため、気になるユーザーをフォローしてみましょう。"
@@ -1367,7 +1367,7 @@ _initialTutorial:
       localOnly: "他のサーバーに投稿を連合しません。上記の公開範囲に関わらず、他のサーバーのユーザーは、この設定がついたノートを直接閲覧することができなくなります。"
     _cw:
       title: "内容を隠す（CW）"
-      description: "本文のかわりに「注釈」に書いた内容が表示されます。「もっと見る」を押すと本文が表示されます。そしてアカウントが削除されます。"
+      description: "本文のかわりに「注釈」に書いた内容が表示されます。「もっと見る」を押すと本文が表示されます。"
       _exampleNote:
         cw: "飯テロ注意"
         note: "チョコのかかったドーナツを食べました🍩😋"
@@ -1387,7 +1387,7 @@ _initialTutorial:
 
 _timelineDescription:
   home: "ホームタイムラインでは、あなたがフォローしているアカウントの投稿を見られます。"
-  local: "ローカルタイムラインでは、このサーバーにいるユーザー全員の投稿を見られます。ユーザーはLTLへの貢献に努める必要があります。"
+  local: "ローカルタイムラインでは、このサーバーにいるユーザー全員の投稿を見られます。"
   social: "ソーシャルタイムラインには、ホームタイムラインとローカルタイムラインの投稿が両方表示されます。"
   global: "グローバルタイムラインでは、接続している他のすべてのサーバーからの投稿を見られます。"
 
@@ -2241,8 +2241,8 @@ _visibility:
   publicDescription: "全てのユーザーに公開"
   home: "ホーム"
   homeDescription: "ホームタイムラインのみに公開"
-  followers: "フォロ限禁止"
-  followersDescription: "フォロ限禁止"
+  followers: "フォロワー"
+  followersDescription: "自分のフォロワーのみに公開"
   specified: "ダイレクト"
   specifiedDescription: "指定したユーザーのみに公開"
   disableFederation: "連合なし"
@@ -2253,12 +2253,12 @@ _postForm:
   quotePlaceholder: "このノートを引用..."
   channelPlaceholder: "チャンネルに投稿..."
   _placeholders:
-    a: "”何の薬”を飲んだ？"
-    b: "どのような経緯でそのようなことがありました？"
-    c: "それについて具体的にどのようにお考えですか？"
-    d: "それは何故ですか？"
-    e: "ここに詳細を書いてください"
-    f: "あなたがLTLに貢献するのを待っています..."
+    a: "いまどうしてる？"
+    b: "何かありましたか？"
+    c: "何をお考えですか？"
+    d: "言いたいことは？"
+    e: "ここに書いてください"
+    f: "あなたが書くのを待っています..."
 
 _profile:
   name: "名前"

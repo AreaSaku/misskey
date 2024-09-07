@@ -125,6 +125,8 @@ const items = ref<MisskeyEntityMap>(new Map());
  */
 const queue = ref<MisskeyEntityMap>(new Map());
 
+const offset = ref(0);
+
 /**
  * 初期化中かどうか（trueならMkLoadingで全て隠す）
  */
@@ -221,6 +223,7 @@ async function init(): Promise<void> {
 			more.value = true;
 		}
 
+		offset.value = res.length;
 		error.value = false;
 		fetching.value = false;
 	}, err => {
@@ -241,7 +244,7 @@ const fetchMore = async (): Promise<void> => {
 		...params,
 		limit: SECOND_FETCH_LIMIT,
 		...(props.pagination.offsetMode ? {
-			offset: items.value.size,
+			offset: offset.value,
 		} : {
 			untilId: Array.from(items.value.keys()).at(-1),
 		}),
@@ -291,6 +294,7 @@ const fetchMore = async (): Promise<void> => {
 				moreFetching.value = false;
 			}
 		}
+		offset.value += res.length;
 	}, err => {
 		moreFetching.value = false;
 	});
@@ -304,7 +308,7 @@ const fetchMoreAhead = async (): Promise<void> => {
 		...params,
 		limit: SECOND_FETCH_LIMIT,
 		...(props.pagination.offsetMode ? {
-			offset: items.value.size,
+			offset: offset.value,
 		} : {
 			sinceId: Array.from(items.value.keys()).at(-1),
 		}),
@@ -316,6 +320,7 @@ const fetchMoreAhead = async (): Promise<void> => {
 			items.value = concatMapWithArray(items.value, res);
 			more.value = true;
 		}
+		offset.value += res.length;
 		moreFetching.value = false;
 	}, err => {
 		moreFetching.value = false;
