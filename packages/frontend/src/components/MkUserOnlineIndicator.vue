@@ -44,7 +44,7 @@ const text = computed(() => {
 	}
 
 	&.status_active {
-		background: #ff2391;
+		background: #ff0099;
 	}
 
 	&.status_offline {
@@ -52,7 +52,7 @@ const text = computed(() => {
 	}
 
 	&.status_unknown {
-		background: #7b6c3e;
+		background: #2c4f54;
 	}
 }
 </style>
