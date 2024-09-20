@@ -10,6 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		[$style.status_online]: user.onlineStatus === 'online',
 		[$style.status_active]: user.onlineStatus === 'active',
 		[$style.status_offline]: user.onlineStatus === 'offline',
+		[$style.status_unknown]: user.onlineStatus === 'unknown',
 	}]"
 ></div>
 </template>
@@ -28,6 +29,7 @@ const text = computed(() => {
 		case 'online': return i18n.ts.online;
 		case 'active': return i18n.ts.active;
 		case 'offline': return i18n.ts.offline;
+		case 'unknown': return i18n.ts.unknown;
 	}
 });
 </script>
@@ -36,17 +38,18 @@ const text = computed(() => {
 .root {
 	box-shadow: 0 0 0 3px var(--panel);
 	border-radius: 120%; // Blinkのバグか知らんけど、100%ぴったりにすると何故か若干楕円でレンダリングされる
-
 	&.status_online {
 		background: #7fffff;
 	}
-
 	&.status_active {
-		background: #ff7fbf;
+		background: #ff5bad;
 	}
-
 	&.status_offline {
-		background: #333366;
+		background: #203744;
+	}
+	&.status_unknown {
+		background: none;
+		box-shadow: none;
 	}
 }
 </style>
