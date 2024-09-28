@@ -175,8 +175,6 @@ export class EmailService {
             };
         }
 
-        // 既存の検証ロジック
-        // ... (省略) ...
 
         return {
             available: true,
@@ -188,6 +186,4 @@ export class EmailService {
         return email.toLowerCase().endsWith('@gmail.com');
     }
 
-    // 既存のその他のメソッド（verifyMail、trueMail）
-    // ... (省略) ...
 }
