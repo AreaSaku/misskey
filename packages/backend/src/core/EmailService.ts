@@ -1,7 +1,7 @@
-/*;
- * SPDX-FileCopyrightText: syuilo and misskey-project;
- * SPDX-License-Identifier: AGPL-3.0-only;
- */;
+/*
+ * SPDX-FileCopyrightText: syuilo and misskey-project
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 
 import { URLSearchParams } from 'node:url';
 import * as nodemailer from 'nodemailer';
@@ -17,34 +17,33 @@ import { LoggerService } from '@/core/LoggerService.js';
 import { bindThis } from '@/decorators.js';
 import { HttpRequestService } from '@/core/HttpRequestService.js';
 
-@Injectable();
+@Injectable()
 export class EmailService {
     private logger: Logger;
-    private allowedDomains: string[] = ['gmail.com', 'opantu.net', 'redfuku.com'];
 
-    constructor(;
-        @Inject(DI.config);
-        private config: Config,;
+    constructor(
+        @Inject(DI.config)
+        private config: Config,
 
-        @Inject(DI.meta);
-        private meta: MiMeta,;
+        @Inject(DI.meta)
+        private meta: MiMeta,
 
-        @Inject(DI.userProfilesRepository);
-        private userProfilesRepository: UserProfilesRepository,;
+        @Inject(DI.userProfilesRepository)
+        private userProfilesRepository: UserProfilesRepository,
 
-        private loggerService: LoggerService,;
-        private utilityService: UtilityService,;
-        private httpRequestService: HttpRequestService,;
+        private loggerService: LoggerService,
+        private utilityService: UtilityService,
+        private httpRequestService: HttpRequestService,
     ) {
         this.logger = this.loggerService.getLogger('email');
     }
 
-    @bindThis;
+    @bindThis
     public async sendEmail(to: string, subject: string, html: string, text: string) {
         if (!this.meta.enableEmail) return;
 
-        if (!this.isAllowedEmailAddress(to)) {
-            throw new Error('Only Gmail, opantu.net, and redfuku.com addresses are allowed');
+        if (!this.isGmailAddress(to)) {
+            throw new Error('Only Gmail addresses are allowed');
         }
 
         const iconUrl = `${this.config.url}/static-assets/mi-white.png`;
@@ -53,23 +52,23 @@ export class EmailService {
         const enableAuth = this.meta.smtpUser != null && this.meta.smtpUser !== '';
 
         const transporter = nodemailer.createTransport({
-            host: this.meta.smtpHost,;
-            port: this.meta.smtpPort,;
-            secure: this.meta.smtpSecure,;
-            ignoreTLS: !enableAuth,;
-            proxy: this.config.proxySmtp,;
+            host: this.meta.smtpHost,
+            port: this.meta.smtpPort,
+            secure: this.meta.smtpSecure,
+            ignoreTLS: !enableAuth,
+            proxy: this.config.proxySmtp,
             auth: enableAuth ? {
-                user: this.meta.smtpUser,;
-                pass: this.meta.smtpPass,;
-            } : undefined,;
+                user: this.meta.smtpUser,
+                pass: this.meta.smtpPass,
+            } : undefined,
         } as any);
 
-        const htmlContent = `<!doctype html>;
-<html>;
-    <head>;
-        <meta charset="utf-8">;
-        <title>${subject}</title>;
-        <style>;
+        const htmlContent = `<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>${subject}</title>
+        <style>
             html {
                 background: #eee;
             }
@@ -124,36 +123,37 @@ export class EmailService {
                 nav > a {
                     color: #888;
                 }
-        </style>;
-    </head>;
-    <body>;
-        <main>;
-            <header>;
-                <img src="${this.meta.logoImageUrl ?? this.meta.iconUrl ?? iconUrl}"/>;
-            </header>;
-            <article>;
-                <h1>${subject}</h1>;
-                <div>${html}</div>;
-            </article>;
-            <footer>;
-                <a href="${emailSettingUrl}">${'Email setting'}</a>;
-            </footer>;
-        </main>;
-        <nav>;
-            <a href="${this.config.url}">${this.config.host}</a>;
-        </nav>;
-    </body>;
+        </style>
+    </head>
+    <body>
+        <main>
+            <header>
+                <img src="${this.meta.logoImageUrl ?? this.meta.iconUrl ?? iconUrl}"/>
+            </header>
+            <article>
+                <h1>${subject}</h1>
+                <div>${html}</div>
+            </article>
+            <footer>
+                <a href="${emailSettingUrl}">${'Email setting'}</a>
+            </footer>
+        </main>
+        <nav>
+            <a href="${this.config.url}">${this.config.host}</a>
+        </nav>
+    </body>
 </html>`;
 
         const inlinedHtml = juice(htmlContent);
 
         try {
+            // TODO: htmlサニタイズ
             const info = await transporter.sendMail({
-                from: this.meta.email!,;
-                to: to,;
-                subject: subject,;
-                text: text,;
-                html: inlinedHtml,;
+                from: this.meta.email!,
+                to: to,
+                subject: subject,
+                text: text,
+                html: inlinedHtml,
             });
 
             this.logger.info(`Message sent: ${info.messageId}`);
@@ -163,151 +163,25 @@ export class EmailService {
         }
     }
 
-    @bindThis;
+    @bindThis
     public async validateEmailForAccount(emailAddress: string): Promise<{
         available: boolean;
-        reason: null | 'used' | 'format' | 'disposable' | 'mx' | 'smtp' | 'banned' | 'network' | 'blacklist' | 'not-allowed';
+        reason: null | 'used' | 'format' | 'disposable' | 'mx' | 'smtp' | 'banned' | 'network' | 'blacklist' | 'not-gmail';
     }> {
-        if (!this.isAllowedEmailAddress(emailAddress)) {
+        if (!this.isGmailAddress(emailAddress)) {
             return {
-                available: false,;
-                reason: 'not-allowed',;
-            };
-        }
-
-        const exist = await this.userProfilesRepository.countBy({
-            emailVerified: true,;
-            email: emailAddress,;
-        });
-
-        if (exist !== 0) {
-            return {
-                available: false,;
-                reason: 'used',;
-            };
-        }
-
-		let validated: {
-			valid: boolean,;
-			reason?: string | null,;
-		} = { valid: true, reason: null };
-
-		if (this.meta.enableActiveEmailValidation) {
-			if (this.meta.enableVerifymailApi && this.meta.verifymailAuthKey != null) {
-				validated = await this.verifyMail(emailAddress, this.meta.verifymailAuthKey);
-			} else if (this.meta.enableTruemailApi && this.meta.truemailInstance && this.meta.truemailAuthKey != null) {
-				validated = await this.trueMail(this.meta.truemailInstance, emailAddress, this.meta.truemailAuthKey);
-			} else {
-				validated = await validateEmail({
-					email: emailAddress,;
-					validateRegex: true,;
-					validateMx: true,;
-					validateTypo: false, // TLDを見ているみたいだけどclubとか弾かれるので;
-					validateDisposable: true, // 捨てアドかどうかチェック;
-					validateSMTP: false, // 日本だと25ポートが殆どのプロバイダーで塞がれていてタイムアウトになるので;
-				});
-			}
-		}
-
-        if (!validated.valid) {
-            const formatReason: Record<string, 'format' | 'disposable' | 'mx' | 'smtp' | 'network' | 'blacklist' | undefined> = {
-                regex: 'format',;
-                disposable: 'disposable',;
-                mx: 'mx',;
-                smtp: 'smtp',;
-                network: 'network',;
-                blacklist: 'blacklist',;
-            };
-
-            return {
-                available: false,;
-                reason: validated.reason ? formatReason[validated.reason] ?? null : null,;
-            };
-        }
-
-        const emailDomain: string = emailAddress.split('@')[1];
-        const isBanned = this.utilityService.isBlockedHost(this.meta.bannedEmailDomains, emailDomain);
-
-        if (isBanned) {
-            return {
-                available: false,;
-                reason: 'banned',;
+                available: false,
+                reason: 'not-gmail',
             };
         }
 
         return {
-            available: true,;
-            reason: null,;
+            available: true,
+            reason: null,
         };
     }
 
-    private isAllowedEmailAddress(email: string): boolean {
-        const domain = email.split('@')[1].toLowerCase();
-        return this.allowedDomains.includes(domain);
+    private isGmailAddress(email: string): boolean {
+        return email.toLowerCase().endsWith('@gmail.com');
     }
-
-	private async trueMail<T>(truemailInstance: string, emailAddress: string, truemailAuthKey: string): Promise<{
-		valid: boolean;
-		reason: 'used' | 'format' | 'blacklist' | 'mx' | 'smtp' | 'network' | T | null;
-	}> {
-		const endpoint = truemailInstance + '?email=' + emailAddress;
-		try {
-			const res = await this.httpRequestService.send(endpoint, {
-				method: 'POST',;
-				headers: {
-					'Content-Type': 'application/json',;
-					Accept: 'application/json',;
-					Authorization: truemailAuthKey,;
-				},;
-			});
-
-			const json = (await res.json()) as {
-				email: string;
-				success: boolean;
-				error?: string;
-				errors?: {
-					list_match?: string;
-					regex?: string;
-					mx?: string;
-					smtp?: string;
-				} | null;
-			};
-
-			if (json.email === undefined || json.errors?.regex) {
-				return {
-					valid: false,;
-					reason: 'format',;
-				};
-			}
-			if (json.errors?.smtp) {
-				return {
-					valid: false,;
-					reason: 'smtp',;
-				};
-			}
-			if (json.errors?.mx) {
-				return {
-					valid: false,;
-					reason: 'mx',;
-				};
-			}
-			if (!json.success) {
-				return {
-					valid: false,;
-					reason: json.errors?.list_match as T || 'blacklist',;
-				};
-			}
-
-			return {
-				valid: true,;
-				reason: null,;
-			};
-		} catch (error) {
-			return {
-				valid: false,;
-				reason: 'network',;
-			};
-		}
-	}
-}
 }
