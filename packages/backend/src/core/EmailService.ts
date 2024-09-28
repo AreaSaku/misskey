@@ -175,7 +175,6 @@ export class EmailService {
             };
         }
 
-
         return {
             available: true,
             reason: null,
@@ -185,5 +184,4 @@ export class EmailService {
     private isGmailAddress(email: string): boolean {
         return email.toLowerCase().endsWith('@gmail.com');
     }
-
 }
