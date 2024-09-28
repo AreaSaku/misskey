@@ -20,6 +20,7 @@ import { HttpRequestService } from '@/core/HttpRequestService.js';
 @Injectable()
 export class EmailService {
     private logger: Logger;
+    private allowedDomains: string[] = ['gmail.com', 'opantu.net', 'redfuku.com'];
 
     constructor(
         @Inject(DI.config)
@@ -42,8 +43,8 @@ export class EmailService {
     public async sendEmail(to: string, subject: string, html: string, text: string) {
         if (!this.meta.enableEmail) return;
 
-        if (!this.isGmailAddress(to)) {
-            throw new Error('Only Gmail addresses are allowed');
+        if (!this.isAllowedEmailAddress(to)) {
+            throw new Error('Only Gmail, opantu.net, and redfuku.com addresses are allowed');
         }
 
         const iconUrl = `${this.config.url}/static-assets/mi-white.png`;
@@ -147,7 +148,6 @@ export class EmailService {
         const inlinedHtml = juice(htmlContent);
 
         try {
-            // TODO: htmlサニタイズ
             const info = await transporter.sendMail({
                 from: this.meta.email!,
                 to: to,
@@ -166,12 +166,72 @@ export class EmailService {
     @bindThis
     public async validateEmailForAccount(emailAddress: string): Promise<{
         available: boolean;
-        reason: null | 'used' | 'format' | 'disposable' | 'mx' | 'smtp' | 'banned' | 'network' | 'blacklist' | 'not-gmail';
+        reason: null | 'used' | 'format' | 'disposable' | 'mx' | 'smtp' | 'banned' | 'network' | 'blacklist' | 'not-allowed';
     }> {
-        if (!this.isGmailAddress(emailAddress)) {
+        if (!this.isAllowedEmailAddress(emailAddress)) {
             return {
                 available: false,
-                reason: 'not-gmail',
+                reason: 'not-allowed',
+            };
+        }
+
+        const exist = await this.userProfilesRepository.countBy({
+            emailVerified: true,
+            email: emailAddress,
+        });
+
+        if (exist !== 0) {
+            return {
+                available: false,
+                reason: 'used',
+            };
+        }
+
+        let validated: {
+            valid: boolean,
+            reason?: string | null,
+        } = { valid: true, reason: null };
+
+        if (this.meta.enableActiveEmailValidation) {
+            if (this.meta.enableVerifymailApi && this.meta.verifymailAuthKey != null) {
+                validated = await this.verifyMail(emailAddress, this.meta.verifymailAuthKey);
+            } else if (this.meta.enableTruemailApi && this.meta.truemailInstance && this.meta.truemailAuthKey != null) {
+                validated = await this.trueMail(this.meta.truemailInstance, emailAddress, this.meta.truemailAuthKey);
+            } else {
+                validated = await validateEmail({
+                    email: emailAddress,
+                    validateRegex: true,
+                    validateMx: true,
+                    validateTypo: false,
+                    validateDisposable: true,
+                    validateSMTP: false,
+                });
+            }
+        }
+
+        if (!validated.valid) {
+            const formatReason: Record<string, 'format' | 'disposable' | 'mx' | 'smtp' | 'network' | 'blacklist' | undefined> = {
+                regex: 'format',
+                disposable: 'disposable',
+                mx: 'mx',
+                smtp: 'smtp',
+                network: 'network',
+                blacklist: 'blacklist',
+            };
+
+            return {
+                available: false,
+                reason: validated.reason ? formatReason[validated.reason] ?? null : null,
+            };
+        }
+
+        const emailDomain: string = emailAddress.split('@')[1];
+        const isBanned = this.utilityService.isBlockedHost(this.meta.bannedEmailDomains, emailDomain);
+
+        if (isBanned) {
+            return {
+                available: false,
+                reason: 'banned',
             };
         }
 
@@ -181,7 +241,8 @@ export class EmailService {
         };
     }
 
-    private isGmailAddress(email: string): boolean {
-        return email.toLowerCase().endsWith('@gmail.com');
+    private isAllowedEmailAddress(email: string): boolean {
+        const domain = email.split('@')[1].toLowerCase();
+        return this.allowedDomains.includes(domain);
     }
 }
