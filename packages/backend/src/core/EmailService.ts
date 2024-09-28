@@ -245,4 +245,6 @@ export class EmailService {
         const domain = email.split('@')[1].toLowerCase();
         return this.allowedDomains.includes(domain);
     }
+
+    // 既存のその他のメソッド（verifyMail、trueMail）は変更なし
 }
