@@ -20,7 +20,7 @@ import { HttpRequestService } from '@/core/HttpRequestService.js';
 @Injectable()
 export class EmailService {
 	private logger: Logger;
-	private allowedDomains: string[] = ['gmail.com', 'redfuku.com', 'opantu.net'];
+	private allowedDomains: string[] = ['gmail.com', 'gmail.com', 'redfuku.com', 'opantu.net'];
 
 	constructor(
 		@Inject(DI.config)
