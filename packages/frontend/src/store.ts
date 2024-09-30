@@ -479,7 +479,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	sound_note: {
 		where: 'device',
-		default: { type: 'cx/New-Posts-ririse', volume: 1 } as SoundStore,
+		default: { type: 'cx/変更してください', volume: 1 } as SoundStore,
 	},
 	sound_noteMy: {
 		where: 'device',

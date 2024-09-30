@@ -28,6 +28,7 @@ export const soundsTypes = [
 	'cx/Notice-kiritan',
 	'cx/Square-Wave-10Hz-3sec',
 	'cx/Our-Shinano',
+	'cx/変更してください',
 	'r_/New-Posts-r_',
 	'r_/New-My-Posts-r_',
 	'r_/Notice1-r_',
