@@ -5148,6 +5148,10 @@ export interface Locale extends ILocale {
      * パスキーの検証に成功しましたが、パスワードレスログインが無効になっています。
      */
     "passkeyVerificationSucceededButPasswordlessLoginDisabled": string;
+    /**
+     * フォロワーへのメッセージ
+     */
+    "messageToFollower": string;
     "_delivery": {
         /**
          * 配信状態
@@ -9281,6 +9285,10 @@ export interface Locale extends ILocale {
          * {x}のエクスポートが完了しました
          */
         "exportOfXCompleted": ParameterizedString<"x">;
+        /**
+         * ログインがありました
+         */
+        "login": string;
         "_types": {
             /**
              * すべて
@@ -9338,6 +9346,10 @@ export interface Locale extends ILocale {
              * エクスポートが完了した
              */
             "exportCompleted": string;
+            /**
+             * ログイン
+             */
+            "login": string;
             /**
              * 通知のテスト
              */
