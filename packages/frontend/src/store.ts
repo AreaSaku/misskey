@@ -78,6 +78,10 @@ export const defaultStore = markRaw(new Storage('base', {
 			global: false,
 		},
 	},
+	abusesTutorial: {
+		where: 'account',
+		default: false,
+	},
 	keepCw: {
 		where: 'account',
 		default: true,
@@ -222,7 +226,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	animatedMfm: {
 		where: 'device',
-		default: false,
+		default: true,
 	},
 	advancedMfm: {
 		where: 'device',
@@ -487,11 +491,11 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	sound_notification: {
 		where: 'device',
-		default: { type: 'cx/Notice-ririse', volume: 1 } as SoundStore,
+		default: { type: 'cx/無音', volume: 1 } as SoundStore,
 	},
 	sound_reaction: {
 		where: 'device',
-		default: { type: 'kq/Police-alert', volume: 1 } as SoundStore,
+		default: { type: 'cx/無音', volume: 1 } as SoundStore,
 	},
 }));
 
