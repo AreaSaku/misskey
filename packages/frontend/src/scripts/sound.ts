@@ -44,7 +44,7 @@ export const soundsTypes = [
 	'GB2110/5MH601RH18_dingdong',
 	'GB2110/5MH601RH18_ED',
 	'oishitake/soga',
-	'oishitake/Chiba-City-Song',
+	'oishitake/栃木県／県民の歌',
 	'kq/Police-alert',
 	'kq/Police-alert-sound',
 	'kq/209chime',
