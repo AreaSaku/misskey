@@ -18,6 +18,7 @@ export const soundsTypes = [
 	'_driveFile_',
 
 	// プリインストール
+	// プリインストール
 	'cx/New-Posts-ririse',
 	'cx/New-My-Posts-ririse',
 	'cx/Notice-ririse',
@@ -89,6 +90,10 @@ export async function loadAudio(url: string, options?: { useCache?: boolean; }) 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (ctx == null) {
 		ctx = new AudioContext();
+
+		window.addEventListener('beforeunload', () => {
+			ctx.close();
+		});
 	}
 	if (options?.useCache ?? true) {
 		if (cache.has(url)) {
