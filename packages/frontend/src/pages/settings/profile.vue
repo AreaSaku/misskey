@@ -132,13 +132,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template #label><SearchLabel>{{ i18n.ts.advancedSettings }}</SearchLabel></template>
 
 				<div class="_gaps_m">
-					<SearchMarker :keywords="['cat']">
-						<MkSwitch v-model="profile.isCat">
-							<template #label><SearchLabel>{{ i18n.ts.flagAsCat }}</SearchLabel></template>
-							<template #caption>{{ i18n.ts.flagAsCatDescription }}</template>
-						</MkSwitch>
-					</SearchMarker>
-
 					<SearchMarker :keywords="['bot']">
 						<MkSwitch v-model="profile.isBot">
 							<template #label><SearchLabel>{{ i18n.ts.flagAsBot }}</SearchLabel></template>
