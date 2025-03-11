@@ -12,7 +12,6 @@ import { GlobalEventService } from '@/core/GlobalEventService.js';
 import { bindThis } from '@/decorators.js';
 import type { GlobalEvents } from '@/core/GlobalEventService.js';
 import { FeaturedService } from '@/core/FeaturedService.js';
-import { FanoutTimelineService } from './FanoutTimelineService.js';
 import type { OnApplicationShutdown } from '@nestjs/common';
 
 @Injectable()
@@ -29,7 +28,6 @@ export class MetaService implements OnApplicationShutdown {
 
 		private featuredService: FeaturedService,
 		private globalEventService: GlobalEventService,
-		private fanoutTimelineService: FanoutTimelineService,
 	) {
 		//this.onMessage = this.onMessage.bind(this);
 
@@ -55,7 +53,7 @@ export class MetaService implements OnApplicationShutdown {
 				case 'metaUpdated': {
 					this.cache = { // TODO: このあたりのデシリアライズ処理は各modelファイル内に関数としてexportしたい
 						...(body.after),
-						proxyAccount: null, // joinなカラムは通常取ってこないので
+						rootUser: null, // joinなカラムは通常取ってこないので
 					};
 					break;
 				}
@@ -114,19 +112,21 @@ export class MetaService implements OnApplicationShutdown {
 			before = metas[0];
 
 			if (before) {
-				if (before.enableFanoutTimeline === true && data.enableFanoutTimeline === false) this.fanoutTimelineService.purgeAllcache();
 				await transactionalEntityManager.update(MiMeta, before.id, data);
-
-				const metas = await transactionalEntityManager.find(MiMeta, {
-					order: {
-						id: 'DESC',
-					},
-				});
-
-				return metas[0];
 			} else {
-				return await transactionalEntityManager.save(MiMeta, data);
+				await transactionalEntityManager.save(MiMeta, {
+					...data,
+					id: 'x',
+				});
 			}
+
+			const afters = await transactionalEntityManager.find(MiMeta, {
+				order: {
+					id: 'DESC',
+				},
+			});
+
+			return afters[0];
 		});
 
 		if (data.hiddenTags) {
