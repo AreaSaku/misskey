@@ -6,6 +6,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
 <SearchMarker path="/settings/privacy" :label="i18n.ts.privacy" :keywords="['privacy']" icon="ti ti-lock-open">
 	<div class="_gaps_m">
+		<MkFeatureBanner icon="/client-assets/unlocked_3d.png" color="#aeff00">
+			<SearchKeyword>{{ i18n.ts._settings.privacyBanner }}</SearchKeyword>
+		</MkFeatureBanner>
+
 		<SearchMarker :keywords="['follow', 'lock']">
 			<MkSwitch v-model="isLocked" @update:modelValue="save()">
 				<template #label><SearchLabel>{{ i18n.ts.makeFollowManuallyApprove }}</SearchLabel></template>
@@ -42,6 +46,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</MkSelect>
 		</SearchMarker>
 
+		<SearchMarker :keywords="['crawle', 'index', 'search']">
+			<MkSwitch v-model="noCrawle" @update:modelValue="save()">
+				<template #label><SearchLabel>{{ i18n.ts.noCrawle }}</SearchLabel></template>
+				<template #caption><SearchKeyword>{{ i18n.ts.noCrawleDescription }}</SearchKeyword></template>
+			</MkSwitch>
+		</SearchMarker>
+
+		<SearchMarker :keywords="['crawle', 'ai']">
+			<MkSwitch v-model="preventAiLearning" @update:modelValue="save()">
+				<template #label><SearchLabel>{{ i18n.ts.preventAiLearning }}</SearchLabel></template>
+				<template #caption><SearchKeyword>{{ i18n.ts.preventAiLearningDescription }}</SearchKeyword></template>
+			</MkSwitch>
+		</SearchMarker>
+
 		<SearchMarker :keywords="['explore']">
 			<MkSwitch v-model="isExplorable" @update:modelValue="save()">
 				<template #label><SearchLabel>{{ i18n.ts.makeExplorable }}</SearchLabel></template>
@@ -60,7 +78,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 							<template #caption>
 								<div>{{ i18n.ts._accountSettings.requireSigninToViewContentsDescription1 }}</div>
 								<div><i class="ti ti-alert-triangle" style="color: var(--MI_THEME-warn);"></i> {{ i18n.ts._accountSettings.requireSigninToViewContentsDescription2 }}</div>
-								<div v-if="instance.federation !== 'none'"><i class="ti ti-alert-triangle" style="color: var(--MI_THEME-warn);"></i> {{ i18n.ts._accountSettings.requireSigninToViewContentsDescription3 }}</div>
 							</template>
 						</MkSwitch>
 					</SearchMarker>
@@ -152,7 +169,7 @@ import MkFolder from '@/components/MkFolder.vue';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { i18n } from '@/i18n.js';
 import { instance } from '@/instance.js';
-import { signinRequired } from '@/account.js';
+import { ensureSignin } from '@/i.js';
 import { definePage } from '@/page.js';
 import FormSlot from '@/components/form/slot.vue';
 import { formatDateTimeString } from '@/utility/format-time-string.js';
@@ -160,8 +177,9 @@ import MkInput from '@/components/MkInput.vue';
 import * as os from '@/os.js';
 import MkDisableSection from '@/components/MkDisableSection.vue';
 import MkInfo from '@/components/MkInfo.vue';
+import MkFeatureBanner from '@/components/MkFeatureBanner.vue';
 
-const $i = signinRequired();
+const $i = ensureSignin();
 
 const isLocked = ref($i.isLocked);
 const autoAcceptFollowed = ref($i.autoAcceptFollowed);

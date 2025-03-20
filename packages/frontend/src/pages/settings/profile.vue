@@ -106,16 +106,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</FormSlot>
 		</SearchMarker>
 
-		<SearchMarker :keywords="['follow', 'message']">
-			<MkInput v-model="profile.followedMessage" :max="200" manualSave :mfmPreview="false">
-				<template #label><SearchLabel>{{ i18n.ts._profile.followedMessage }}</SearchLabel><span class="_beta">{{ i18n.ts.beta }}</span></template>
-				<template #caption>
-					<div><SearchKeyword>{{ i18n.ts._profile.followedMessageDescription }}</SearchKeyword></div>
-					<div>{{ i18n.ts._profile.followedMessageDescriptionForLockedAccount }}</div>
-				</template>
-			</MkInput>
-		</SearchMarker>
-
 		<SearchMarker :keywords="['reaction']">
 			<MkSelect v-model="reactionAcceptance">
 				<template #label><SearchLabel>{{ i18n.ts.reactionAcceptance }}</SearchLabel></template>
@@ -131,7 +121,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkFolder>
 				<template #label><SearchLabel>{{ i18n.ts.advancedSettings }}</SearchLabel></template>
 
-				<div class="_gaps_m">
 					<SearchMarker :keywords="['bot']">
 						<MkSwitch v-model="profile.isBot">
 							<template #label><SearchLabel>{{ i18n.ts.flagAsBot }}</SearchLabel></template>
@@ -157,16 +146,15 @@ import FormSlot from '@/components/form/slot.vue';
 import { selectFile } from '@/utility/select-file.js';
 import * as os from '@/os.js';
 import { i18n } from '@/i18n.js';
-import { signinRequired } from '@/account.js';
+import { ensureSignin } from '@/i.js';
 import { langmap } from '@/utility/langmap.js';
 import { definePage } from '@/page.js';
 import { claimAchievement } from '@/utility/achievements.js';
 import { store } from '@/store.js';
-import { globalEvents } from '@/events.js';
 import MkInfo from '@/components/MkInfo.vue';
 import MkTextarea from '@/components/MkTextarea.vue';
 
-const $i = signinRequired();
+const $i = ensureSignin();
 
 const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 
@@ -216,7 +204,6 @@ function saveFields() {
 	os.apiWithDialog('i/update', {
 		fields: fields.value.filter(field => field.name !== '' && field.value !== '').map(field => ({ name: field.name, value: field.value })),
 	});
-	globalEvents.emit('requestClearPageCache');
 }
 
 function save() {
@@ -242,7 +229,6 @@ function save() {
 			text: i18n.ts.yourNameContainsProhibitedWordsDescription,
 		},
 	});
-	globalEvents.emit('requestClearPageCache');
 	claimAchievement('profileFilled');
 	if (profile.name === 'syuilo' || profile.name === 'しゅいろ') {
 		claimAchievement('setNameToSyuilo');
@@ -274,7 +260,6 @@ function changeAvatar(ev) {
 		});
 		$i.avatarId = i.avatarId;
 		$i.avatarUrl = i.avatarUrl;
-		globalEvents.emit('requestClearPageCache');
 		claimAchievement('profileFilled');
 	});
 }
@@ -301,7 +286,6 @@ function changeBanner(ev) {
 		});
 		$i.bannerId = i.bannerId;
 		$i.bannerUrl = i.bannerUrl;
-		globalEvents.emit('requestClearPageCache');
 	});
 }
 
