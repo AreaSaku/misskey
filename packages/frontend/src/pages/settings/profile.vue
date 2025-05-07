@@ -127,7 +127,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 							<template #caption>{{ i18n.ts.flagAsBotDescription }}</template>
 						</MkSwitch>
 					</SearchMarker>
-				</div>
 			</MkFolder>
 		</SearchMarker>
 	</div>
