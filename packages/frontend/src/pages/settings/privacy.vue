@@ -36,8 +36,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkSelect v-model="followingVisibility" @update:modelValue="save()">
 				<template #label><SearchLabel>{{ i18n.ts.followingVisibility }}</SearchLabel></template>
 				<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
-				<option value="followers">{{ i18n.ts._ffVisibility.followers }}</option>
-				<option value="private">{{ i18n.ts._ffVisibility.private }}</option>
 			</MkSelect>
 		</SearchMarker>
 
@@ -45,16 +43,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkSelect v-model="followersVisibility" @update:modelValue="save()">
 				<template #label><SearchLabel>{{ i18n.ts.followersVisibility }}</SearchLabel></template>
 				<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
-				<option value="followers">{{ i18n.ts._ffVisibility.followers }}</option>
-				<option value="private">{{ i18n.ts._ffVisibility.private }}</option>
 			</MkSelect>
-		</SearchMarker>
-
-		<SearchMarker :keywords="['online', 'status']">
-			<MkSwitch v-model="hideOnlineStatus" @update:modelValue="save()">
-				<template #label><SearchLabel>{{ i18n.ts.hideOnlineStatus }}</SearchLabel></template>
-				<template #caption><SearchKeyword>{{ i18n.ts.hideOnlineStatusDescription }}</SearchKeyword></template>
-			</MkSwitch>
 		</SearchMarker>
 
 		<SearchMarker :keywords="['crawle', 'index', 'search']">
@@ -76,27 +65,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template #label><SearchLabel>{{ i18n.ts.makeExplorable }}</SearchLabel></template>
 				<template #caption><SearchKeyword>{{ i18n.ts.makeExplorableDescription }}</SearchKeyword></template>
 			</MkSwitch>
-		</SearchMarker>
-
-		<SearchMarker :keywords="['chat']">
-			<FormSection>
-				<template #label><SearchLabel>{{ i18n.ts.chat }}</SearchLabel></template>
-
-				<div class="_gaps_m">
-					<MkInfo v-if="$i.policies.chatAvailability === 'unavailable'">{{ i18n.ts._chat.chatNotAvailableForThisAccountOrServer }}</MkInfo>
-					<SearchMarker :keywords="['chat']">
-						<MkSelect v-model="chatScope" @update:modelValue="save()">
-							<template #label><SearchLabel>{{ i18n.ts._chat.chatAllowedUsers }}</SearchLabel></template>
-							<option value="everyone">{{ i18n.ts._chat._chatAllowedUsers.everyone }}</option>
-							<option value="followers">{{ i18n.ts._chat._chatAllowedUsers.followers }}</option>
-							<option value="following">{{ i18n.ts._chat._chatAllowedUsers.following }}</option>
-							<option value="mutual">{{ i18n.ts._chat._chatAllowedUsers.mutual }}</option>
-							<option value="none">{{ i18n.ts._chat._chatAllowedUsers.none }}</option>
-							<template #caption>{{ i18n.ts._chat.chatAllowedUsers_note }}</template>
-						</MkSelect>
-					</SearchMarker>
-				</div>
-			</FormSection>
 		</SearchMarker>
 
 		<SearchMarker :keywords="['lockdown']">
@@ -121,8 +89,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 							<div class="_gaps_s">
 								<MkSelect :modelValue="makeNotesFollowersOnlyBefore_type" @update:modelValue="makeNotesFollowersOnlyBefore = $event === 'relative' ? -604800 : $event === 'absolute' ? Math.floor(Date.now() / 1000) : null">
 									<option :value="null">{{ i18n.ts.none }}</option>
-									<option value="relative">{{ i18n.ts._accountSettings.notesHavePassedSpecifiedPeriod }}</option>
-									<option value="absolute">{{ i18n.ts._accountSettings.notesOlderThanSpecifiedDateAndTime }}</option>
 								</MkSelect>
 
 								<MkSelect v-if="makeNotesFollowersOnlyBefore_type === 'relative'" v-model="makeNotesFollowersOnlyBefore">
@@ -158,8 +124,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 							<div class="_gaps_s">
 								<MkSelect :modelValue="makeNotesHiddenBefore_type" @update:modelValue="makeNotesHiddenBefore = $event === 'relative' ? -604800 : $event === 'absolute' ? Math.floor(Date.now() / 1000) : null">
 									<option :value="null">{{ i18n.ts.none }}</option>
-									<option value="relative">{{ i18n.ts._accountSettings.notesHavePassedSpecifiedPeriod }}</option>
-									<option value="absolute">{{ i18n.ts._accountSettings.notesOlderThanSpecifiedDateAndTime }}</option>
 								</MkSelect>
 
 								<MkSelect v-if="makeNotesHiddenBefore_type === 'relative'" v-model="makeNotesHiddenBefore">
@@ -229,7 +193,6 @@ const hideOnlineStatus = ref($i.hideOnlineStatus);
 const publicReactions = ref($i.publicReactions);
 const followingVisibility = ref($i.followingVisibility);
 const followersVisibility = ref($i.followersVisibility);
-const chatScope = ref($i.chatScope);
 
 const makeNotesFollowersOnlyBefore_type = computed(() => {
 	if (makeNotesFollowersOnlyBefore.value == null) {
@@ -282,7 +245,6 @@ function save() {
 		publicReactions: !!publicReactions.value,
 		followingVisibility: followingVisibility.value,
 		followersVisibility: followersVisibility.value,
-		chatScope: chatScope.value,
 	});
 }
 
