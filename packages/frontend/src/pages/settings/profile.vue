@@ -105,7 +105,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template #caption>{{ i18n.ts._profile.metadataDescription }}</template>
 			</FormSlot>
 		</SearchMarker>
-
+<!--
 		<SearchMarker :keywords="['follow', 'message']">
 			<MkInput v-model="profile.followedMessage" :max="200" manualSave :mfmPreview="false">
 				<template #label><SearchLabel>{{ i18n.ts._profile.followedMessage }}</SearchLabel><span class="_beta">{{ i18n.ts.beta }}</span></template>
@@ -115,7 +115,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</template>
 			</MkInput>
 		</SearchMarker>
-
+-->
 		<SearchMarker :keywords="['reaction']">
 			<MkSelect v-model="reactionAcceptance">
 				<template #label><SearchLabel>{{ i18n.ts.reactionAcceptance }}</SearchLabel></template>
@@ -126,7 +126,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<option value="likeOnly">{{ i18n.ts.likeOnly }}</option>
 			</MkSelect>
 		</SearchMarker>
-
+<!--
 		<SearchMarker>
 			<MkFolder>
 				<template #label><SearchLabel>{{ i18n.ts.advancedSettings }}</SearchLabel></template>
@@ -138,7 +138,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 							<template #caption>{{ i18n.ts.flagAsCatDescription }}</template>
 						</MkSwitch>
 					</SearchMarker>
-
+-->
 					<SearchMarker :keywords="['bot']">
 						<MkSwitch v-model="profile.isBot">
 							<template #label><SearchLabel>{{ i18n.ts.flagAsBot }}</SearchLabel></template>
