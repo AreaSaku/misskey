@@ -83,7 +83,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template #caption><SearchKeyword>{{ i18n.ts.makeExplorableDescription }}</SearchKeyword></template>
 			</MkSwitch>
 		</SearchMarker>
-
+		
 		<!--
 		<SearchMarker :keywords="['chat']">
 			<FormSection>
@@ -199,10 +199,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 			</FormSection>
 		</SearchMarker>
+		-->
 	</div>
 </SearchMarker>
 </template>
--->
 
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue';
