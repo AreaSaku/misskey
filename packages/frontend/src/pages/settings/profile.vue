@@ -126,12 +126,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<option value="likeOnly">{{ i18n.ts.likeOnly }}</option>
 			</MkSelect>
 		</SearchMarker>
-<!--
+
 		<SearchMarker>
 			<MkFolder>
 				<template #label><SearchLabel>{{ i18n.ts.advancedSettings }}</SearchLabel></template>
 
 				<div class="_gaps_m">
+					<!--
 					<SearchMarker :keywords="['cat']">
 						<MkSwitch v-model="profile.isCat">
 							<template #label><SearchLabel>{{ i18n.ts.flagAsCat }}</SearchLabel></template>
