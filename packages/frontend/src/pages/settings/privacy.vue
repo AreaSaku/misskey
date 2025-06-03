@@ -36,8 +36,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkSelect v-model="followingVisibility" @update:modelValue="save()">
 				<template #label><SearchLabel>{{ i18n.ts.followingVisibility }}</SearchLabel></template>
 				<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
+				<!--
 				<option value="followers">{{ i18n.ts._ffVisibility.followers }}</option>
 				<option value="private">{{ i18n.ts._ffVisibility.private }}</option>
+				-->
 			</MkSelect>
 		</SearchMarker>
 
@@ -45,17 +47,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkSelect v-model="followersVisibility" @update:modelValue="save()">
 				<template #label><SearchLabel>{{ i18n.ts.followersVisibility }}</SearchLabel></template>
 				<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
+				<!--
 				<option value="followers">{{ i18n.ts._ffVisibility.followers }}</option>
 				<option value="private">{{ i18n.ts._ffVisibility.private }}</option>
+				-->
 			</MkSelect>
 		</SearchMarker>
 
+		<!--
 		<SearchMarker :keywords="['online', 'status']">
 			<MkSwitch v-model="hideOnlineStatus" @update:modelValue="save()">
 				<template #label><SearchLabel>{{ i18n.ts.hideOnlineStatus }}</SearchLabel></template>
 				<template #caption><SearchKeyword>{{ i18n.ts.hideOnlineStatusDescription }}</SearchKeyword></template>
 			</MkSwitch>
 		</SearchMarker>
+		-->
 
 		<SearchMarker :keywords="['crawle', 'index', 'search']">
 			<MkSwitch v-model="noCrawle" @update:modelValue="save()">
@@ -78,6 +84,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</MkSwitch>
 		</SearchMarker>
 
+		<!--
 		<SearchMarker :keywords="['chat']">
 			<FormSection>
 				<template #label><SearchLabel>{{ i18n.ts.chat }}</SearchLabel></template>
@@ -195,6 +202,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	</div>
 </SearchMarker>
 </template>
+-->
 
 <script lang="ts" setup>
 import { ref, computed, watch } from 'vue';
