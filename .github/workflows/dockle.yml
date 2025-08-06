@@ -27,6 +27,4 @@ jobs:
           docker compose up -d web
           docker tag "$(docker compose images web | awk 'OFS=":" {print $4}' | tail -n +2)" misskey-web:latest
       - run: |
-          cmd="dockle --exit-code 1 misskey-web:latest ${image_name}"
-          echo "> ${cmd}"
-          eval "${cmd}"
+          dockle --exit-code 1 misskey-web:latest
