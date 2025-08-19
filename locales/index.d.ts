@@ -4235,6 +4235,10 @@ export interface Locale extends ILocale {
      */
     "selectFromPresets": string;
     /**
+     * カスタム
+     */
+    "custom": string;
+    /**
      * 実績
      */
     "achievements": string;
@@ -4386,6 +4390,10 @@ export interface Locale extends ILocale {
      * ノート検索は利用できません。
      */
     "notesSearchNotAvailable": string;
+    /**
+     * ユーザー検索は利用できません。
+     */
+    "usersSearchNotAvailable": string;
     /**
      * ライセンス
      */
@@ -5517,6 +5525,10 @@ export interface Locale extends ILocale {
      * セーフモードが有効な間はデフォルトのテーマが使用されます。セーフモードをオフにすると元に戻ります。
      */
     "themeIsDefaultBecauseSafeMode": string;
+    /**
+     * ベータ版の検証にご協力いただきありがとうございます！
+     */
+    "thankYouForTestingBeta": string;
     "_order": {
         /**
          * 新しい順
@@ -6610,6 +6622,18 @@ export interface Locale extends ILocale {
          * 現在の一部の設定はリセットされます。
          */
         "restartServerSetupWizardConfirm_text": string;
+        /**
+         * エントランスページのスタイル
+         */
+        "entrancePageStyle": string;
+        /**
+         * タイムラインを表示する
+         */
+        "showTimelineForVisitor": string;
+        /**
+         * アクティビティを表示する
+         */
+        "showActivityiesForVisitor": string;
         "_userGeneratedContentsVisibilityForVisitor": {
             /**
              * 全て公開
@@ -7800,6 +7824,10 @@ export interface Locale extends ILocale {
              */
             "canSearchNotes": string;
             /**
+             * ユーザー検索の利用
+             */
+            "canSearchUsers": string;
+            /**
              * 翻訳機能の利用
              */
             "canUseTranslator": string;
@@ -8828,6 +8856,10 @@ export interface Locale extends ILocale {
          * 日
          */
         "day": string;
+        /**
+         * ヶ月
+         */
+        "month": string;
     };
     "_2fa": {
         /**
