@@ -1,7 +1,18 @@
-## 2025.11.1
+## 2025.12.0
 
-### General
--
+### Note
+- configの`trustProxy`のデフォルト値を`false`に変更しました。アップデート前に現在のconfigをご確認の上、必要に応じて値を変更してください。
+
+### Client
+- Fix: stacking router viewで連続して戻る操作を行うと何も表示されなくなる問題を修正
+
+### Server
+- Enhance: メモリ使用量を削減しました
+- Enhance: ActivityPubアクティビティを送信する際のパフォーマンス向上
+- Enhance: 依存関係の更新
+- Fix: セキュリティに関する修正
+
+## 2025.11.1
 
 ### Client
 
@@ -17,9 +28,10 @@
   (Cherry-picked from https://github.com/MisskeyIO/misskey/pull/1129)
 - Fix: フォロー申請をキャンセルする際の確認ダイアログの文言が不正確な問題を修正
 - Fix: 初回読み込み時にエラーになることがある問題を修正
+- Fix: お気に入りクリップの一覧表示が正しく動作しない問題を修正
+- Fix: AiScript Misskey 拡張APIにおいて、各種関数の引数で明示的に `null` が指定されている場合のハンドリングを修正
 
 ### Server
-- Enhance: `clips/my-favorites` APIがページネーションに対応しました
 - Enhance: メモリ使用量を削減しました
 - Enhance: 依存関係の更新
 - Fix: ワードミュートの文字数計算を修正  
