@@ -288,8 +288,8 @@ function save() {
 		makeNotesHiddenBefore: makeNotesHiddenBefore.value,
 		hideOnlineStatus: !!hideOnlineStatus.value,
 		publicReactions: !!publicReactions.value,
-		followingVisibility: followingVisibility.public,
-		followersVisibility: followersVisibility.public,
+		followingVisibility: followingVisibility.value,
+		followersVisibility: followersVisibility.value,
 		chatScope: chatScope.value,
 	});
 }
