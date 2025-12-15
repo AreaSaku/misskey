@@ -1,6 +1,6 @@
 {
 	"name": "misskey",
-	"version": "2025.12.1-alpha.0-WKH",
+	"version": "2025.12.1-WKH",
 	"codename": "nasubi",
 	"repository": {
 		"type": "git",
