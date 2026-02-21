@@ -33,7 +33,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			@input="onInput"
 		>
 		<datalist v-if="datalist" :id="id">
-			<option v-for="data in datalist" :key="data" :value="data"/>
+			<option v-for="data in datalist" :key="data" :value="data"></option>
 		</datalist>
 		<div ref="suffixEl" :class="$style.suffix"><slot name="suffix"></slot></div>
 	</div>
@@ -92,6 +92,7 @@ const emit = defineEmits<{
 	(ev: 'keydown', _ev: KeyboardEvent): void;
 	(ev: 'enter', _ev: KeyboardEvent): void;
 	(ev: 'update:modelValue', value: ModelValueType<T>): void;
+	(ev: 'savingStateChange', saved: boolean, invalid: boolean): void;
 }>();
 
 const { modelValue } = toRefs(props);
@@ -151,6 +152,10 @@ watch(v, () => {
 
 	invalid.value = inputEl.value?.validity.badInput ?? true;
 });
+
+watch([changed, invalid], ([newChanged, newInvalid]) => {
+	emit('savingStateChange', newChanged, newInvalid);
+}, { immediate: true });
 
 // このコンポーネントが作成された時、非表示状態である場合がある
 // 非表示状態だと要素の幅などは0になってしまうので、定期的に計算する
