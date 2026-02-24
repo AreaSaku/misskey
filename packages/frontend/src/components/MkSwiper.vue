@@ -7,9 +7,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 <div
 	ref="rootEl"
 	:class="[$style.transitionRoot, { [$style.enableAnimation]: shouldAnimate }]"
-	@touchstart.passive="touchStart"
-	@touchmove.passive="touchMove"
-	@touchend.passive="touchEnd"
+	@touchstart.passive="moveStartByTouch"
+	@touchmove.passive="moving"
+	@touchend.passive="moveEndByTouch"
+	@touchcancel.passive="moveCancelByTouch"
 >
 	<Transition
 		:class="[$style.transitionChildren, { [$style.swiping]: isSwipingForClass }]"
@@ -26,7 +27,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </div>
 </template>
 <script lang="ts" setup>
-import { ref, useTemplateRef, computed, nextTick, watch } from 'vue';
+import { ref, useTemplateRef, computed, watch, onUnmounted } from 'vue';
 import type { Tab } from '@/components/global/MkPageHeader.tabs.vue';
 import { isHorizontalSwipeSwiping as isSwiping } from '@/utility/touch.js';
 import { prefer } from '@/preferences.js';
@@ -59,10 +60,21 @@ const MAX_SWIPE_DISTANCE = 120;
 // スワイプ方向を判定する角度の許容範囲（度数）
 const SWIPE_DIRECTION_ANGLE_THRESHOLD = 50;
 
+// 指を離したときに元に戻すアニメーションの時間
+const RELEASE_TRANSITION_DURATION = 200;
+
+// スワイプ方向ロック判定を始める最小移動量（小さすぎると誤判定しやすい）
+const DIRECTION_LOCK_START_DISTANCE = 6;
+
 // ▲ しきい値 ▲ //
 
 let startScreenX: number | null = null;
 let startScreenY: number | null = null;
+
+let isTracking = false;
+let rafId: number | null = null;
+let pendingPullDistance: number | null = null;
+let releaseAnimationCancel: (() => void) | null = null;
 
 const currentTabIndex = computed(() => props.tabs.findIndex(tab => tab.key === tabModel.value));
 
@@ -71,55 +83,173 @@ const isSwipingForClass = ref(false);
 let swipeAborted = false;
 let swipeDirectionLocked: 'horizontal' | 'vertical' | null = null;
 
-function touchStart(event: TouchEvent) {
+function getScreenX(event: TouchEvent): number {
+	return event.touches[0]?.screenX ?? 0;
+}
+
+function getScreenY(event: TouchEvent): number {
+	return event.touches[0]?.screenY ?? 0;
+}
+
+function clamp(value: number, min: number, max: number): number {
+	return Math.min(Math.max(value, min), max);
+}
+
+function toEffectiveDistance(rawDistance: number): number {
+	const sign = Math.sign(rawDistance);
+	const abs = Math.abs(rawDistance);
+	if (abs <= MIN_SWIPE_DISTANCE) return 0;
+	return sign * (abs - MIN_SWIPE_DISTANCE);
+}
+
+function setPullDistance(nextDistance: number) {
+	pendingPullDistance = nextDistance;
+	if (rafId != null) return;
+	rafId = window.requestAnimationFrame(() => {
+		rafId = null;
+		const next = pendingPullDistance ?? 0;
+		pendingPullDistance = null;
+		// グリッチ抑制: 0.5px未満の更新は捨てる
+		if (Math.abs(next - pullDistance.value) < 0.5) return;
+		pullDistance.value = next;
+	});
+}
+
+function cancelMoveBySystem() {
+	if (releaseAnimationCancel != null) {
+		releaseAnimationCancel();
+		releaseAnimationCancel = null;
+	}
+}
+
+onUnmounted(() => {
+	// コンポーネント破棄後にpullDistanceを書き換えないようにする
+	if (rafId != null) {
+		window.cancelAnimationFrame(rafId);
+		rafId = null;
+	}
+	pendingPullDistance = null;
+	cancelMoveBySystem();
+});
+
+function moveBySystem(to: number, duration = RELEASE_TRANSITION_DURATION): Promise<void> {
+	cancelMoveBySystem();
+
+	if (!shouldAnimate.value || duration <= 0) {
+		setPullDistance(to);
+		return Promise.resolve();
+	}
+
+	return new Promise(resolve => {
+		const from = pullDistance.value;
+		const delta = to - from;
+		if (Math.abs(delta) < 0.5) {
+			setPullDistance(to);
+			resolve();
+			return;
+		}
+
+		// DOMHighResTimeStampと合わせるためにDate.now()ではなくperformance.now()を使う
+		let startTime: DOMHighResTimeStamp | null = null;
+		let cancelled = false;
+		releaseAnimationCancel = () => {
+			cancelled = true;
+			startTime = null;
+		};
+
+		const tick = (now: DOMHighResTimeStamp) => {
+			if (cancelled) {
+				resolve();
+				return;
+			}
+			if (startTime == null) {
+				startTime = now;
+			}
+
+			const t = Math.min((now - startTime) / duration, 1);
+			// リリース時は軽くイージング（追従中は直接反映）
+			const eased = 1 - Math.pow(1 - t, 3);
+			setPullDistance(from + delta * eased);
+			if (t >= 1) {
+				releaseAnimationCancel = null;
+				resolve();
+				return;
+			}
+			window.requestAnimationFrame(tick);
+		};
+		window.requestAnimationFrame(tick);
+	});
+}
+
+function resetState() {
+	startScreenX = null;
+	startScreenY = null;
+	isTracking = false;
+	swipeDirectionLocked = null;
+	isSwiping.value = false;
+}
+
+function closeContent() {
+	return moveBySystem(0);
+}
+
+function moveStartByTouch(event: TouchEvent) {
 	if (!prefer.r.enableHorizontalSwipe.value) return;
 
 	if (event.touches.length !== 1) return;
 
 	if (hasSomethingToDoWithXSwipe(event.target as HTMLElement)) return;
 
-	startScreenX = event.touches[0].screenX;
-	startScreenY = event.touches[0].screenY;
+	cancelMoveBySystem();
+
+	startScreenX = getScreenX(event);
+	startScreenY = getScreenY(event);
+	isTracking = true;
 	swipeDirectionLocked = null; // スワイプ方向をリセット
+	swipeAborted = false;
 }
 
-function touchMove(event: TouchEvent) {
+function moving(event: TouchEvent) {
 	if (!prefer.r.enableHorizontalSwipe.value) return;
 
 	if (event.touches.length !== 1) return;
 
 	if (startScreenX == null || startScreenY == null) return;
+	if (!isTracking) return;
 
 	if (swipeAborted) return;
 
 	if (hasSomethingToDoWithXSwipe(event.target as HTMLElement)) return;
 
-	let distanceX = event.touches[0].screenX - startScreenX;
-	let distanceY = event.touches[0].screenY - startScreenY;
+	const rawDistanceX = getScreenX(event) - startScreenX;
+	const rawDistanceY = getScreenY(event) - startScreenY;
 
 	// スワイプ方向をロック
 	if (!swipeDirectionLocked) {
-		const angle = Math.abs(Math.atan2(distanceY, distanceX) * (180 / Math.PI));
-		if (angle > 90 - SWIPE_DIRECTION_ANGLE_THRESHOLD && angle < 90 + SWIPE_DIRECTION_ANGLE_THRESHOLD) {
-			swipeDirectionLocked = 'vertical';
-		} else {
-			swipeDirectionLocked = 'horizontal';
+		const moveDistance = Math.hypot(rawDistanceX, rawDistanceY);
+		if (moveDistance >= DIRECTION_LOCK_START_DISTANCE) {
+			const angle = Math.abs(Math.atan2(rawDistanceY, rawDistanceX) * (180 / Math.PI));
+			if (angle > 90 - SWIPE_DIRECTION_ANGLE_THRESHOLD && angle < 90 + SWIPE_DIRECTION_ANGLE_THRESHOLD) {
+				swipeDirectionLocked = 'vertical';
+			} else {
+				swipeDirectionLocked = 'horizontal';
+			}
 		}
 	}
 
 	// 縦方向のスワイプの場合は中断
 	if (swipeDirectionLocked === 'vertical') {
 		swipeAborted = true;
-		pullDistance.value = 0;
-		isSwiping.value = false;
-		window.setTimeout(() => {
-			isSwipingForClass.value = false;
-		}, 400);
+		setPullDistance(0);
+		resetState();
+		// クラスは即座に落とす（縦スクロールを邪魔しない）
+		isSwipingForClass.value = false;
 		return;
 	}
 
-	if (Math.abs(distanceX) < MIN_SWIPE_DISTANCE) return;
-	if (Math.abs(distanceX) > MAX_SWIPE_DISTANCE) return;
+	if (Math.abs(rawDistanceX) < MIN_SWIPE_DISTANCE) return;
+
+	let distanceX = clamp(toEffectiveDistance(rawDistanceX), -MAX_SWIPE_DISTANCE, MAX_SWIPE_DISTANCE);
 
 	if (currentTabIndex.value === 0 || props.tabs[currentTabIndex.value - 1].onClick) {
 		distanceX = Math.min(distanceX, 0);
@@ -131,32 +261,14 @@ function touchMove(event: TouchEvent) {
 
 	isSwiping.value = true;
 	isSwipingForClass.value = true;
-	nextTick(() => {
-		// グリッチを控えるため、1.5px以上の差がないと更新しない
-		if (Math.abs(distanceX - pullDistance.value) < 1.5) return;
-		pullDistance.value = distanceX;
-	});
+	setPullDistance(distanceX);
 }
 
-function touchEnd(event: TouchEvent) {
-	if (swipeAborted) {
-		swipeAborted = false;
-		return;
-	}
+function onSwipeRelease(distance: number) {
+	const effectiveDistance = toEffectiveDistance(distance);
+	const effectiveThreshold = Math.max(SWIPE_DISTANCE_THRESHOLD - MIN_SWIPE_DISTANCE, 0);
 
-	if (!prefer.r.enableHorizontalSwipe.value) return;
-
-	if (event.touches.length !== 0) return;
-
-	if (startScreenX == null) return;
-
-	if (!isSwiping.value) return;
-
-	if (hasSomethingToDoWithXSwipe(event.target as HTMLElement)) return;
-
-	const distance = event.changedTouches[0].screenX - startScreenX;
-
-	if (Math.abs(distance) > SWIPE_DISTANCE_THRESHOLD) {
+	if (Math.abs(effectiveDistance) > effectiveThreshold) {
 		if (distance > 0) {
 			if (props.tabs[currentTabIndex.value - 1] && !props.tabs[currentTabIndex.value - 1].onClick) {
 				tabModel.value = props.tabs[currentTabIndex.value - 1].key;
@@ -169,28 +281,56 @@ function touchEnd(event: TouchEvent) {
 			}
 		}
 	}
+}
 
-	pullDistance.value = 0;
-	isSwiping.value = false;
-	window.setTimeout(() => {
+function moveEndByTouch(event: TouchEvent) {
+	if (swipeAborted) {
+		swipeAborted = false;
+		resetState();
+		return;
+	}
+
+	if (!prefer.r.enableHorizontalSwipe.value) return;
+
+	if (event.touches.length !== 0) return;
+
+	if (startScreenX == null) return;
+	if (!isTracking) return;
+
+	if (!isSwiping.value) return;
+
+	if (hasSomethingToDoWithXSwipe(event.target as HTMLElement)) return;
+
+	const distance = event.changedTouches[0].screenX - startScreenX;
+	onSwipeRelease(distance);
+
+	resetState();
+	closeContent().finally(() => {
 		isSwipingForClass.value = false;
-	}, 400);
+	});
+}
 
-	swipeDirectionLocked = null; // スワイプ方向をリセット
+function moveCancelByTouch(_event: TouchEvent) {
+	swipeAborted = false;
+	resetState();
+	closeContent().finally(() => {
+		isSwipingForClass.value = false;
+	});
 }
 
 /** 横スワイプに関与する可能性のある要素を調べる */
 function hasSomethingToDoWithXSwipe(el: HTMLElement) {
+	// 入力のじゃまになる
 	if (['INPUT', 'TEXTAREA'].includes(el.tagName)) return true;
 	if (el.isContentEditable) return true;
-	if (el.scrollWidth > el.clientWidth) return true;
 
 	const style = window.getComputedStyle(el);
-	if (['absolute', 'fixed', 'sticky'].includes(style.position)) return true;
-	if (['scroll', 'auto'].includes(style.overflowX)) return true;
+	// 実際に横スクロールできる要素では横スワイプができないほうがよい
+	if (['scroll', 'auto'].includes(style.overflowX) && el.scrollWidth > el.clientWidth + 1) return true;
+	// すでに横スワイプを禁止している要素では横スワイプができないほうがよい
 	if (style.touchAction === 'pan-x') return true;
 
-	if (el.parentElement && el.parentElement !== rootEl.value) {
+	if (el.parentElement != null && el.parentElement !== rootEl.value) {
 		return hasSomethingToDoWithXSwipe(el.parentElement);
 	} else {
 		return false;
@@ -246,6 +386,6 @@ watch(tabModel, (newTab, oldTab) => {
 }
 
 .swiping {
-	transition: transform .2s ease-out;
+	transition: none;
 }
 </style>
