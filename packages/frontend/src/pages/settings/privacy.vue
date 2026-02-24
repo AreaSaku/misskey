@@ -36,6 +36,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkSelect v-model="followingVisibility" @update:modelValue="save()">
 				<template #label><SearchLabel>{{ i18n.ts.followingVisibility }}</SearchLabel></template>
 				<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
+				<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
 				<!--
 				<option value="followers">{{ i18n.ts._ffVisibility.followers }}</option>
 				<option value="private">{{ i18n.ts._ffVisibility.private }}</option>
@@ -46,6 +47,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<SearchMarker :keywords="['follower', 'visibility']">
 			<MkSelect v-model="followersVisibility" @update:modelValue="save()">
 				<template #label><SearchLabel>{{ i18n.ts.followersVisibility }}</SearchLabel></template>
+				<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
 				<option value="public">{{ i18n.ts._ffVisibility.public }}</option>
 				<!--
 				<option value="followers">{{ i18n.ts._ffVisibility.followers }}</option>
