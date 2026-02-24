@@ -67,6 +67,8 @@ export const soundsTypes = [
 	'syuilo/n-ea',
 	'syuilo/triple',
 	'syuilo/square-pico',
+	'syuilo/waon',
+	'syuilo/bubble2',
 ] as const;
 
 export const operationTypes = [
