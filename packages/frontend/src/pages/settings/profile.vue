@@ -20,7 +20,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<SearchMarker :keywords="['avatar', 'icon', 'change']">
 						<MkButton primary rounded @click="changeAvatar"><SearchLabel>{{ i18n.ts._profile.changeAvatar }}</SearchLabel></MkButton>
 					</SearchMarker>
-					<MkButton primary rounded link to="/settings/avatar-decoration">{{ i18n.ts.decorate }} <i class="ti ti-sparkles"></i></MkButton>
+					<MkButton primary rounded type="routerLink" to="/settings/avatar-decoration">{{ i18n.ts.decorate }} <i class="ti ti-sparkles"></i></MkButton>
 				</div>
 			</div>
 		</div>
@@ -101,7 +101,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template #caption>{{ i18n.ts._profile.metadataDescription }}</template>
 			</FormSlot>
 		</SearchMarker>
-<!--
+
 		<SearchMarker :keywords="['follow', 'message']">
 			<MkInput v-model="profile.followedMessage" :max="200" manualSave :mfmPreview="false">
 				<template #label><SearchLabel>{{ i18n.ts._profile.followedMessage }}</SearchLabel></template>
@@ -126,20 +126,19 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template #label><SearchLabel>{{ i18n.ts.reactionAcceptance }}</SearchLabel></template>
 			</MkSelect>
 		</SearchMarker>
--->
+
 		<SearchMarker>
 			<MkFolder>
 				<template #label><SearchLabel>{{ i18n.ts.advancedSettings }}</SearchLabel></template>
 
 				<div class="_gaps_m">
-<!--
 					<SearchMarker :keywords="['cat']">
 						<MkSwitch v-model="profile.isCat">
 							<template #label><SearchLabel>{{ i18n.ts.flagAsCat }}</SearchLabel></template>
 							<template #caption>{{ i18n.ts.flagAsCatDescription }}</template>
 						</MkSwitch>
 					</SearchMarker>
--->
+
 					<SearchMarker :keywords="['bot']">
 						<MkSwitch v-model="profile.isBot">
 							<template #label><SearchLabel>{{ i18n.ts.flagAsBot }}</SearchLabel></template>
