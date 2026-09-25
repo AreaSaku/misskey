@@ -476,19 +476,19 @@ export const PREF_DEF = definePreferences({
 		default: false,
 	},
 	'sound.on.note': {
-		default: { type: 'cx/無音', volume: 1 } as SoundStore,
+		default: { type: 'syuilo/n-aec', volume: 1 } as SoundStore,
 	},
 	'sound.on.noteMy': {
-		default: { type: 'cx/New-My-Posts-ririse', volume: 1 } as SoundStore,
+		default: { type: 'syuilo/n-cea-4va', volume: 1 } as SoundStore,
 	},
 	'sound.on.notification': {
-		default: { type: 'cx/無音', volume: 1 } as SoundStore,
+		default: { type: 'syuilo/n-ea', volume: 1 } as SoundStore,
 	},
 	'sound.on.reaction': {
-		default: { type: 'cx/無音', volume: 1 } as SoundStore,
+		default: { type: 'syuilo/bubble2', volume: 1 } as SoundStore,
 	},
 	'sound.on.chatMessage': {
-		default: { type: 'cx/無音', volume: 1 } as SoundStore,
+		default: { type: 'syuilo/waon', volume: 1 } as SoundStore,
 	},
 
 	'deck.alwaysShowMainColumn': {
