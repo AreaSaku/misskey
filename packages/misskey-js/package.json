@@ -1,7 +1,7 @@
 {
 	"type": "module",
 	"name": "misskey-js",
-	"version": "2026.9.1-メディアプレイヤーを元に戻す",
+	"version": "2026.9.1-make-media-separate-again-WKH",
 	"description": "Misskey SDK for JavaScript",
 	"license": "MIT",
 	"main": "./built/index.js",
