@@ -5,9 +5,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <!-- Media系専用のinput range -->
 <template>
-<div :class="$style.controlsSeekbar">
-	<progress v-if="buffer !== undefined" :class="$style.buffer" :value="isNaN(buffer) ? 0 : buffer" min="0" max="1">{{ Math.round(buffer * 100) }}% buffered</progress>
-	<input v-model="model" :class="$style.seek" :style="`--value: ${modelValue * 100}%;`" type="range" min="0" max="1" step="any" @change="emit('dragEnded', modelValue)"/>
+<div :style="sliderBgWhite ? '--sliderBg: rgba(255,255,255,.25);' : '--sliderBg: var(--MI_THEME-scrollbarHandle);'">
+	<div :class="$style.controlsSeekbar">
+		<progress v-if="buffer !== undefined" :class="$style.buffer" :value="isNaN(buffer) ? 0 : buffer" min="0" max="1">{{ Math.round(buffer * 100) }}% buffered</progress>
+		<input v-model="model" :class="$style.seek" :style="`--value: ${modelValue * 100}%;`" type="range" min="0" max="1" step="any" @change="emit('dragEnded', modelValue)"/>
+	</div>
 </div>
 </template>
 
@@ -16,8 +18,10 @@ import { computed } from 'vue';
 
 withDefaults(defineProps<{
 	buffer?: number;
+	sliderBgWhite?: boolean;
 }>(), {
 	buffer: undefined,
+	sliderBgWhite: false,
 });
 
 const emit = defineEmits<{
@@ -34,8 +38,6 @@ const modelValue = computed({
 <style lang="scss" module>
 .controlsSeekbar {
 	position: relative;
-	--sliderBg: light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.15));
-	--thumbSize: 17px;
 }
 
 .seek {
@@ -47,7 +49,7 @@ const modelValue = computed({
 	border-radius: 26px;
 	color: var(--MI_THEME-accent);
 	display: block;
-	height: 24px;
+	height: 19px;
 	margin: 0;
 	min-width: 0;
 	padding: 0;
@@ -81,11 +83,11 @@ const modelValue = computed({
 		border: 0;
 		border-radius: 100%;
 		box-shadow: 0 1px 1px rgba(35, 40, 47, .15),0 0 0 1px rgba(35, 40, 47, .2);
-		height: var(--thumbSize);
-		margin-top: calc((5px - var(--thumbSize)) / 2);
+		height: 13px;
+		margin-top: -4px;
 		position: relative;
 		transition: all .2s ease;
-		width: var(--thumbSize);
+		width: 13px;
 
 		&:active {
 			box-shadow: 0 1px 1px rgba(35, 40, 47, .15), 0 0 0 1px rgba(35, 40, 47, .15), 0 0 0 3px rgba(255, 255, 255, .5);
@@ -97,10 +99,10 @@ const modelValue = computed({
 		border: 0;
 		border-radius: 100%;
 		box-shadow: 0 1px 1px rgba(35, 40, 47, .15),0 0 0 1px rgba(35, 40, 47, .2);
-		height: var(--thumbSize);
+		height: 13px;
 		position: relative;
 		transition: all .2s ease;
-		width: var(--thumbSize);
+		width: 13px;
 
 		&:active {
 			box-shadow: 0 1px 1px rgba(35, 40, 47, .15), 0 0 0 1px rgba(35, 40, 47, .15), 0 0 0 3px rgba(255, 255, 255, .5);
@@ -117,7 +119,7 @@ const modelValue = computed({
 .buffer {
 	appearance: none;
 	background: transparent;
-	color: color(from var(--MI_THEME-accent) srgb r g b / 0.25);
+	color: var(--sliderBg);
 	border: 0;
 	border-radius: 99rem;
 	height: 5px;
