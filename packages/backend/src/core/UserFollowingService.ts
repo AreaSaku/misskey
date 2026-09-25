@@ -380,7 +380,7 @@ export class UserFollowingService implements OnModuleInit {
 
 		this.cacheService.userFollowingsCache.refresh(follower.id);
 
-		await this.decrementFollowing(following.follower, following.followee);
+		this.decrementFollowing(following.follower, following.followee);
 
 		if (!silent && this.userEntityService.isLocalUser(follower)) {
 			// Publish unfollow event
