@@ -1,7 +1,7 @@
 {
 	"type": "module",
 	"name": "misskey-js",
-	"version": "2026.9.1-make-media-separate-again-WKH",
+	"version": "2026.9.1-WKH-make-media-separate-again-and-add-a-toggle-next-time",
 	"description": "Misskey SDK for JavaScript",
 	"license": "MIT",
 	"main": "./built/index.js",
