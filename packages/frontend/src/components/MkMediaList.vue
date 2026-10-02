@@ -44,10 +44,8 @@ import { prefer } from '@/preferences.js';
 
 const props = defineProps<{
 	mediaList: Misskey.entities.DriveFile[];
-	raw?: boolean;
-	// 2026.9.x callers pass this prop. The 2026.6 media stack does not need it,
-	// but keeping it here preserves the newer component interface.
 	user?: Misskey.entities.User | null;
+	raw?: boolean;
 }>();
 
 const gallery = useTemplateRef('gallery');
