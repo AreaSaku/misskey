@@ -20,12 +20,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<button v-tooltip="i18n.ts.createNoteFromTheFile" class="_button" :class="$style.fileQuickActionsOthersButton" @click="postThis()">
 					<i class="ti ti-pencil"></i>
 				</button>
-				<button v-if="file.isSensitive" v-tooltip="i18n.ts.unmarkAsSensitive" class="_button" :class="$style.fileQuickActionsOthersButton" @click="toggleSensitive()">
-					<i class="ti ti-eye"></i>
-				</button>
-				<button v-else v-tooltip="i18n.ts.markAsSensitive" class="_button" :class="$style.fileQuickActionsOthersButton" @click="toggleSensitive()">
-					<i class="ti ti-eye-exclamation"></i>
-				</button>
 				<a v-tooltip="i18n.ts.download" :href="file.url" :download="file.name" class="_button" :class="$style.fileQuickActionsOthersButton">
 					<i class="ti ti-download"></i>
 				</a>
@@ -139,23 +133,6 @@ function move() {
 			folderId: folders[0] ? folders[0].id : null,
 		}).then(async () => {
 			await _fetch_();
-		});
-	});
-}
-
-function toggleSensitive() {
-	if (file.value == null) return;
-
-	os.apiWithDialog('drive/files/update', {
-		fileId: file.value.id,
-		isSensitive: !file.value.isSensitive,
-	}).then(async () => {
-		await _fetch_();
-	}).catch(err => {
-		os.alert({
-			type: 'error',
-			title: i18n.ts.error,
-			text: err.message,
 		});
 	});
 }

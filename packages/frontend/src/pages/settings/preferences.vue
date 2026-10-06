@@ -336,13 +336,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 					<div class="_gaps_m">
 						<div class="_gaps_s">
-							<SearchMarker :keywords="['remember', 'keep', 'note', 'cw']">
-								<MkPreferenceContainer k="keepCw">
-									<MkSwitch v-model="keepCw">
-										<template #label><SearchLabel>{{ i18n.ts.keepCw }}</SearchLabel></template>
-									</MkSwitch>
-								</MkPreferenceContainer>
-							</SearchMarker>
 
 							<SearchMarker :keywords="['remember', 'keep', 'note', 'visibility']">
 								<MkPreferenceContainer k="rememberNoteVisibility">
@@ -901,7 +894,6 @@ const realtimeMode = store.model('realtimeMode');
 const overridedDeviceKind = prefer.model('overridedDeviceKind');
 const pollingInterval = prefer.model('pollingInterval');
 const showTitlebar = prefer.model('showTitlebar');
-const keepCw = prefer.model('keepCw');
 const serverDisconnectedBehavior = prefer.model('serverDisconnectedBehavior');
 const hemisphere = prefer.model('hemisphere');
 const showNoteActionsOnlyHover = prefer.model('showNoteActionsOnlyHover');

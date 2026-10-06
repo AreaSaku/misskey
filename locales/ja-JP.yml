@@ -323,6 +323,7 @@ birthday: "誕生日"
 yearsOld: "{age}歳"
 registeredDate: "登録日"
 location: "場所"
+wkhDarkModeOnly: "わくわく保育園ではダークモードのみ利用できます。"
 theme: "テーマ"
 themeForLightMode: "ライトモードで使うテーマ"
 themeForDarkMode: "ダークモードで使うテーマ"
@@ -1749,6 +1750,7 @@ _timelineDescription:
   local: "ローカルタイムラインでは、このサーバーにいるユーザー全員の投稿を見られます。"
   social: "ソーシャルタイムラインには、ホームタイムラインとローカルタイムラインの投稿が両方表示されます。"
   global: "グローバルタイムラインでは、接続している他のすべてのサーバーからの投稿を見られます。"
+  nsfw: "NSFWタイムラインでは、リモートサーバーでセンシティブに設定された画像を含む公開投稿だけを表示します。"
 
 _serverRules:
   description: "新規登録前に表示する、サーバーの簡潔なルールを設定します。内容は利用規約の要約とすることを推奨します。"
@@ -2802,6 +2804,7 @@ _timelines:
   local: "ローカル"
   social: "ソーシャル"
   global: "グローバル"
+  nsfw: "NSFW"
 
 _play:
   new: "Playの作成"

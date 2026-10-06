@@ -71,10 +71,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</I18n> - <button class="_textButton" @click="cancelSchedule()">{{ i18n.ts.cancel }}</button>
 	</MkInfo>
 	<MkInfo v-if="hasNotSpecifiedMentions" warn :class="$style.hasNotSpecifiedMentions">{{ i18n.ts.notSpecifiedMentionWarning }} - <button class="_textButton" @click="addMissingMention()">{{ i18n.ts.add }}</button></MkInfo>
-	<div v-show="useCw" :class="$style.cwOuter">
-		<input ref="cwInputEl" v-model="cw" :class="$style.cw" :placeholder="i18n.ts.annotation" @keydown="onKeydown" @keyup="onKeyup" @compositionend="onCompositionEnd">
-		<div v-if="maxCwTextLength - cwTextLength < 20" :class="['_acrylic', $style.cwTextCount, { [$style.cwTextOver]: cwTextLength > maxCwTextLength }]">{{ maxCwTextLength - cwTextLength }}</div>
-	</div>
 	<div :class="[$style.textOuter, { [$style.withCw]: useCw }]">
 		<div v-if="targetChannel" :class="$style.colorBar" :style="{ background: targetChannel.color }"></div>
 		<textarea ref="textareaEl" v-model="text" :class="[$style.text]" :disabled="posting || posted" :readonly="textAreaReadOnly" :placeholder="placeholder" data-testid="post-form-text" @keydown="onKeydown" @keyup="onKeyup" @paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"></textarea>
@@ -97,7 +93,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<button v-tooltip="i18n.ts.attachFile + ' (' + i18n.ts.upload + ')'" class="_button" :class="$style.footerButton" @click="chooseFileFromPc"><i class="ti ti-photo-plus"></i></button>
 			<button v-tooltip="i18n.ts.attachFile + ' (' + i18n.ts.fromDrive + ')'" class="_button" :class="$style.footerButton" @click="chooseFileFromDrive"><i class="ti ti-cloud-download"></i></button>
 			<button v-tooltip="i18n.ts.poll" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: poll }]" @click="togglePoll"><i class="ti ti-chart-arrows"></i></button>
-			<button v-tooltip="i18n.ts.useCw" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]" @click="useCw = !useCw"><i class="ti ti-eye-off"></i></button>
 			<button v-tooltip="i18n.ts.hashtags" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withHashtags }]" @click="withHashtags = !withHashtags"><i class="ti ti-hash"></i></button>
 			<button v-tooltip="i18n.ts.mention" class="_button" :class="$style.footerButton" @click="insertMention"><i class="ti ti-at"></i></button>
 			<button v-if="showAddMfmFunction" v-tooltip="i18n.ts.addMfmFunction" :class="['_button', $style.footerButton]" @click="insertMfmFunction"><i class="ti ti-palette"></i></button>
@@ -198,12 +193,12 @@ const posted = ref(false);
 const text = ref(props.initialText ?? '');
 const files = ref(props.initialFiles ?? []);
 const poll = ref<PollEditorModelValue | null>(null);
-const useCw = ref<boolean>(!!props.initialCw);
+const useCw = ref<boolean>(false);
 const showPreview = ref(store.s.showPreview);
 watch(showPreview, () => store.set('showPreview', showPreview.value));
 const showAddMfmFunction = ref(prefer.s.enableQuickAddMfmFunction);
 watch(showAddMfmFunction, () => prefer.commit('enableQuickAddMfmFunction', showAddMfmFunction.value));
-const cw = ref<string | null>(props.initialCw ?? null);
+const cw = ref<string | null>(null);
 const localOnly = ref(props.initialLocalOnly ?? (prefer.s.rememberNoteVisibility ? store.s.localOnly : prefer.s.defaultNoteLocalOnly));
 const visibility = ref(props.initialVisibility ?? (prefer.s.rememberNoteVisibility ? store.s.visibility : prefer.s.defaultNoteVisibility));
 const visibleUsers = ref<Misskey.entities.UserDetailed[]>([]);
@@ -419,12 +414,6 @@ if (replyTargetNote.value && ['home', 'followers', 'specified'].includes(replyTa
 if (props.specified) {
 	visibility.value = 'specified';
 	pushVisibleUser(props.specified);
-}
-
-// keep cw when reply
-if (prefer.s.keepCw && replyTargetNote.value && replyTargetNote.value.cw) {
-	useCw.value = true;
-	cw.value = replyTargetNote.value.cw;
 }
 
 function watchForDraft() {
@@ -919,7 +908,7 @@ async function saveServerDraft(options: {
 	return await os.apiWithDialog(serverDraftId.value == null ? 'notes/drafts/create' : 'notes/drafts/update', {
 		...(serverDraftId.value == null ? {} : { draftId: serverDraftId.value }),
 		text: text.value,
-		cw: useCw.value ? cw.value || null : null,
+		cw: null,
 		visibility: visibility.value,
 		localOnly: localOnly.value,
 		hashtag: hashtags.value,
@@ -1026,7 +1015,7 @@ async function post(ev?: PointerEvent) {
 		renoteId: renoteTargetNote.value ? renoteTargetNote.value.id : quoteId.value ? quoteId.value : undefined,
 		channelId: targetChannel.value ? targetChannel.value.id : undefined,
 		poll: poll.value,
-		cw: useCw.value ? cw.value ?? '' : null,
+		cw: null,
 		localOnly: visibility.value === 'specified' ? false : localOnly.value,
 		visibility: visibility.value,
 		visibleUserIds: visibility.value === 'specified' ? visibleUsers.value.map(u => u.id) : undefined,
@@ -1243,7 +1232,7 @@ function showActions(ev: PointerEvent) {
 			}, (key, value) => {
 				if (typeof key !== 'string' || typeof value !== 'string') return;
 				if (key === 'text') { text.value = value; }
-				if (key === 'cw') { useCw.value = value !== null; cw.value = value; }
+				if (key === 'cw') { useCw.value = false; cw.value = null; }
 			});
 		},
 	})), ev.currentTarget ?? ev.target);
@@ -1260,8 +1249,8 @@ async function openAccountMenu(ev: PointerEvent) {
 		}, {
 			restore: async (draft: Misskey.entities.NoteDraft) => {
 				text.value = draft.text ?? '';
-				useCw.value = draft.cw != null;
-				cw.value = draft.cw ?? null;
+				useCw.value = false;
+				cw.value = null;
 				visibility.value = draft.visibility;
 				localOnly.value = draft.localOnly ?? false;
 				files.value = draft.files ?? [];
@@ -1423,8 +1412,8 @@ onMounted(() => {
 			const draft = JSON.parse(miLocalStorage.getItem('drafts') ?? '{}')[draftKey.value] as StoredDrafts[string] | undefined;
 			if (draft != null) {
 				text.value = draft.data.text;
-				useCw.value = draft.data.useCw;
-				cw.value = draft.data.cw;
+				useCw.value = false;
+				cw.value = null;
 				visibility.value = draft.data.visibility;
 				localOnly.value = draft.data.localOnly;
 				files.value = (draft.data.files || []).filter(draftFile => draftFile);
@@ -1446,8 +1435,8 @@ onMounted(() => {
 		if (props.initialNote) {
 			const init = props.initialNote;
 			text.value = init.text ? init.text : '';
-			useCw.value = init.cw != null;
-			cw.value = init.cw ?? null;
+			useCw.value = false;
+			cw.value = null;
 			visibility.value = init.visibility;
 			localOnly.value = init.localOnly ?? false;
 			files.value = init.files ?? [];

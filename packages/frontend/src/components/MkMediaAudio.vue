@@ -524,7 +524,10 @@ onDeactivated(() => {
 	grid-area: volume;
 
 	.volumeSeekbar {
-		display: none;
+		display: block;
+		width: 64px;
+		max-width: 18vw;
+		flex-grow: 1;
 	}
 }
 

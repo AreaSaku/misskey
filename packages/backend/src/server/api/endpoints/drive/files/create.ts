@@ -116,7 +116,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					comment: ps.comment,
 					folderId: ps.folderId,
 					force: ps.force,
-					sensitive: ps.isSensitive,
+					sensitive: false,
 					requestIp: this.serverSettings.enableIpLogging ? ip : null,
 					requestHeaders: this.serverSettings.enableIpLogging ? headers : null,
 				});

@@ -748,7 +748,10 @@ onDeactivated(() => {
 	grid-area: volume;
 
 	.volumeSeekbar {
-		display: none;
+		display: block;
+		width: 64px;
+		max-width: 18vw;
+		flex-grow: 1;
 	}
 }
 
@@ -777,7 +780,7 @@ onDeactivated(() => {
 @container (max-width: 300px) {
 	.videoControls {
 		grid-template-areas:
-			"left . right"
+			"left volume right"
 			"seekbar seekbar seekbar";
 		grid-template-columns: auto 1fr auto;
 	}
@@ -787,7 +790,7 @@ onDeactivated(() => {
 	}
 
 	.controlsVolume {
-		display: none;
+		display: flex;
 	}
 }
 </style>

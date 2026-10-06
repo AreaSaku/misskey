@@ -147,6 +147,13 @@ if (props.src === 'antenna') {
 		})),
 		useShallowRef: true,
 	}));
+} else if (props.src === 'nsfw') {
+	paginator = markRaw(new Paginator('notes/nsfw-timeline', {
+		computedParams: computed(() => ({
+			withRenotes: props.withRenotes,
+		})),
+		useShallowRef: true,
+	}));
 } else if (props.src === 'mentions') {
 	paginator = markRaw(new Paginator('notes/mentions', {
 		useShallowRef: true,
@@ -312,6 +319,7 @@ const connections = {
 	localTimeline: null as Misskey.IChannelConnection<Misskey.Channels['localTimeline']> | null,
 	hybridTimeline: null as Misskey.IChannelConnection<Misskey.Channels['hybridTimeline']> | null,
 	globalTimeline: null as Misskey.IChannelConnection<Misskey.Channels['globalTimeline']> | null,
+	nsfwTimeline: null as Misskey.IChannelConnection<Misskey.Channels['nsfwTimeline']> | null,
 	main: null as Misskey.IChannelConnection<Misskey.Channels['main']> | null,
 	userList: null as Misskey.IChannelConnection<Misskey.Channels['userList']> | null,
 	channel: null as Misskey.IChannelConnection<Misskey.Channels['channel']> | null,
@@ -353,6 +361,11 @@ function connectChannel() {
 			withFiles: props.onlyFiles ? true : undefined,
 		});
 		connections.globalTimeline.on('note', prepend);
+	} else if (props.src === 'nsfw') {
+		connections.nsfwTimeline = stream.useChannel('nsfwTimeline', {
+			withRenotes: props.withRenotes,
+		});
+		connections.nsfwTimeline.on('note', prepend);
 	} else if (props.src === 'mentions') {
 		connections.main = stream.useChannel('main');
 		connections.main.on('mention', prepend);

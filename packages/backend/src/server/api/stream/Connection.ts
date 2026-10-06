@@ -25,6 +25,7 @@ import { HomeTimelineChannel } from '@/server/api/stream/channels/home-timeline.
 import { LocalTimelineChannel } from '@/server/api/stream/channels/local-timeline.js';
 import { HybridTimelineChannel } from '@/server/api/stream/channels/hybrid-timeline.js';
 import { GlobalTimelineChannel } from '@/server/api/stream/channels/global-timeline.js';
+import { NsfwTimelineChannel } from '@/server/api/stream/channels/nsfw-timeline.js';
 import { UserListChannel } from '@/server/api/stream/channels/user-list.js';
 import { HashtagChannel } from '@/server/api/stream/channels/hashtag.js';
 import { RoleTimelineChannel } from '@/server/api/stream/channels/role-timeline.js';
@@ -352,6 +353,7 @@ export default class Connection {
 			case 'localTimeline': return LocalTimelineChannel;
 			case 'hybridTimeline': return HybridTimelineChannel;
 			case 'globalTimeline': return GlobalTimelineChannel;
+			case 'nsfwTimeline': return NsfwTimelineChannel;
 			case 'userList': return UserListChannel;
 			case 'hashtag': return HashtagChannel;
 			case 'roleTimeline': return RoleTimelineChannel;

@@ -11,6 +11,7 @@ export const basicTimelineTypes = [
 	'local',
 	'social',
 	'global',
+	'nsfw',
 ] as const;
 
 export type BasicTimelineType = typeof basicTimelineTypes[number];
@@ -29,6 +30,8 @@ export function basicTimelineIconClass(timeline: BasicTimelineType): string {
 			return 'ti ti-universe';
 		case 'global':
 			return 'ti ti-whirl';
+		case 'nsfw':
+			return 'ti ti-eye-exclamation';
 	}
 }
 
@@ -42,6 +45,8 @@ export function isAvailableBasicTimeline(timeline: BasicTimelineType | undefined
 			return $i != null && $i.policies.ltlAvailable;
 		case 'global':
 			return ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
+		case 'nsfw':
+			return $i != null;
 		default:
 			return false;
 	}

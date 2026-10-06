@@ -13,7 +13,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div v-adaptive-border class="rfqxtzch _panel">
 			<div class="toggle">
 				<div class="toggleWrapper">
-					<div class="toggle" :class="store.r.darkMode.value ? 'checked' : null" @click="toggleDarkMode()">
+					<div class="toggle" :class="store.r.darkMode.value ? 'checked' : null" >
 						<span class="before">{{ i18n.ts.light }}</span>
 						<span class="after">{{ i18n.ts.dark }}</span>
 						<span class="toggle__handler">
@@ -31,11 +31,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 			</div>
 			<div class="sync">
-				<SearchMarker :keywords="['sync', 'device', 'dark', 'light', 'mode']">
-					<MkSwitch v-model="syncDeviceDarkMode">
-						<template #label><SearchLabel>{{ i18n.ts.syncDeviceDarkMode }}</SearchLabel></template>
-					</MkSwitch>
-				</SearchMarker>
+				<MkInfo>{{ i18n.ts.wkhDarkModeOnly }}</MkInfo>
 			</div>
 		</div>
 
@@ -220,7 +216,6 @@ import MkThemePreview from '@/components/MkThemePreview.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import { handleThemeInstallError, installTheme, removeTheme } from '@/theme.js';
 import { getBuiltinThemes } from '@@/js/theme.js';
-import { isDeviceDarkmode } from '@/utility/is-device-darkmode.js';
 import { store } from '@/store.js';
 import { i18n } from '@/i18n.js';
 import { instance } from '@/instance.js';
@@ -271,30 +266,7 @@ const lightThemeId = computed({
 	},
 });
 
-const syncDeviceDarkMode = prefer.model('syncDeviceDarkMode');
 const themesCount = installedThemes.value.length;
-
-watch(syncDeviceDarkMode, () => {
-	if (syncDeviceDarkMode.value) {
-		store.set('darkMode', isDeviceDarkmode());
-	}
-});
-
-async function toggleDarkMode() {
-	const value = !store.r.darkMode.value;
-	if (syncDeviceDarkMode.value) {
-		const { canceled } = await os.confirm({
-			type: 'question',
-			text: i18n.tsx.switchDarkModeManuallyWhenSyncEnabledConfirm({ x: i18n.ts.syncDeviceDarkMode }),
-		});
-		if (canceled) return;
-
-		syncDeviceDarkMode.value = false;
-		store.set('darkMode', value);
-	} else {
-		store.set('darkMode', value);
-	}
-}
 
 const themesSyncEnabled = ref(prefer.isSyncEnabled('themes'));
 

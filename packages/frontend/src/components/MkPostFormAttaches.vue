@@ -99,20 +99,6 @@ async function detachAndDeleteMedia(file: Misskey.entities.DriveFile) {
 	globalEvents.emit('driveFilesDeleted', [file]);
 }
 
-function toggleSensitive(file: Misskey.entities.DriveFile) {
-	if (mock) {
-		emit('changeSensitive', file, !file.isSensitive);
-		return;
-	}
-
-	misskeyApi('drive/files/update', {
-		fileId: file.id,
-		isSensitive: !file.isSensitive,
-	}).then(() => {
-		emit('changeSensitive', file, !file.isSensitive);
-	});
-}
-
 async function rename(file: Misskey.entities.DriveFile) {
 	if (mock) return;
 
@@ -160,10 +146,7 @@ function showFileMenu(file: Misskey.entities.DriveFile, ev: PointerEvent | Keybo
 		text: i18n.ts.renameFile,
 		icon: 'ti ti-forms',
 		action: () => { rename(file); },
-	}, {
-		text: file.isSensitive ? i18n.ts.unmarkAsSensitive : i18n.ts.markAsSensitive,
-		icon: file.isSensitive ? 'ti ti-eye-exclamation' : 'ti ti-eye',
-		action: () => { toggleSensitive(file); },
+
 	}, {
 		text: i18n.ts.describeFile,
 		icon: 'ti ti-text-caption',

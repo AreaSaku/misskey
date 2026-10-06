@@ -109,6 +109,15 @@ export type Channels = {
 		};
 		receives: null;
 	};
+	nsfwTimeline: {
+		params: {
+			withRenotes?: boolean;
+		};
+		events: {
+			note: (payload: Note) => void;
+		};
+		receives: null;
+	};
 	userList: {
 		params: {
 			listId: string;

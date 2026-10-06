@@ -1309,6 +1309,10 @@ export interface Locale extends ILocale {
      */
     "theme": string;
     /**
+     * わくわく保育園ではダークモードのみ利用できます。
+     */
+    "wkhDarkModeOnly": string;
+    /**
      * ライトモードで使うテーマ
      */
     "themeForLightMode": string;
@@ -6868,6 +6872,10 @@ export interface Locale extends ILocale {
          * グローバルタイムラインでは、接続している他のすべてのサーバーからの投稿を見られます。
          */
         "global": string;
+        /**
+         * NSFWタイムラインでは、リモートサーバーでセンシティブに設定された画像を含む公開投稿だけを表示します。
+         */
+        "nsfw": string;
     };
     "_serverRules": {
         /**
@@ -10616,6 +10624,10 @@ export interface Locale extends ILocale {
          * グローバル
          */
         "global": string;
+        /**
+         * NSFW
+         */
+        "nsfw": string;
     };
     "_play": {
         /**

@@ -1,5 +1,5 @@
 import { Endpoints as Gen } from './autogen/endpoint.js';
-import { UserDetailed } from './autogen/models.js';
+import { Note, UserDetailed } from './autogen/models.js';
 import {
 	AdminRolesCreateRequest,
 	AdminRolesCreateResponse,
@@ -130,4 +130,16 @@ export type Endpoints = Overwrite<
 			res: EmptyResponse;
 		},
 	}
->;
+> & {
+	'notes/nsfw-timeline': {
+		req: {
+			withRenotes?: boolean;
+			limit?: number;
+			sinceId?: string;
+			untilId?: string;
+			sinceDate?: number;
+			untilDate?: number;
+		};
+		res: Note[];
+	};
+};
