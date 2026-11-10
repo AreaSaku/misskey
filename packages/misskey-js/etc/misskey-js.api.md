@@ -4,13 +4,13 @@
 
 ```ts
 
-import type { AuthenticationResponseJSON } from '@simplewebauthn/browser';
+import type { AuthenticationResponseJSON as AuthenticationResponseJSON_2 } from '@simplewebauthn/browser';
 import { EventEmitter } from 'eventemitter3';
 import { Options } from 'reconnecting-websocket';
 import type { PublicKeyCredentialCreationOptionsJSON as PublicKeyCredentialCreationOptionsJSON_2 } from '@simplewebauthn/browser';
 import type { PublicKeyCredentialRequestOptionsJSON as PublicKeyCredentialRequestOptionsJSON_2 } from '@simplewebauthn/browser';
 import _ReconnectingWebSocket from 'reconnecting-websocket';
-import type { RegistrationResponseJSON } from '@simplewebauthn/browser';
+import type { RegistrationResponseJSON as RegistrationResponseJSON_2 } from '@simplewebauthn/browser';
 
 // Warning: (ae-forgotten-export) The symbol "components" needs to be exported by the entry point index.d.ts
 //
@@ -735,6 +735,15 @@ export type Channels = {
         };
         receives: null;
     };
+    nsfwTimeline: {
+        params: {
+            withRenotes?: boolean;
+        };
+        events: {
+            note: (payload: Note) => void;
+        };
+        receives: null;
+    };
     userList: {
         params: {
             listId: string;
@@ -779,6 +788,16 @@ export type Channels = {
         };
         events: {
             note: (payload: Note) => void;
+        };
+        receives: null;
+    };
+    clip: {
+        params: {
+            clipId: string;
+        };
+        events: {
+            updated: () => void;
+            deleted: () => void;
         };
         receives: null;
     };
@@ -2058,6 +2077,8 @@ declare namespace entities {
         NotesLocalTimelineResponse,
         NotesMentionsRequest,
         NotesMentionsResponse,
+        NotesNsfwTimelineRequest,
+        NotesNsfwTimelineResponse,
         NotesPollsRecommendationRequest,
         NotesPollsRecommendationResponse,
         NotesPollsVoteRequest,
@@ -2553,7 +2574,7 @@ type I2faKeyDoneRequest_2 = {
     password: string;
     token?: string | null;
     name: string;
-    credential: RegistrationResponseJSON;
+    credential: RegistrationResponseJSON_2;
 };
 
 // @public (undocumented)
@@ -3036,6 +3057,12 @@ type NotesMentionsRequest = operations['notes___mentions']['requestBody']['conte
 type NotesMentionsResponse = operations['notes___mentions']['responses']['200']['content']['application/json'];
 
 // @public (undocumented)
+type NotesNsfwTimelineRequest = operations['notes___nsfw-timeline']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type NotesNsfwTimelineResponse = operations['notes___nsfw-timeline']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
 type NotesPollsRecommendationRequest = operations['notes___polls___recommendation']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
@@ -3410,7 +3437,7 @@ type SigninFlowRequest = {
     username: string;
     password?: string;
     token?: string;
-    credential?: AuthenticationResponseJSON;
+    credential?: AuthenticationResponseJSON_2;
     'hcaptcha-response'?: string | null;
     'g-recaptcha-response'?: string | null;
     'turnstile-response'?: string | null;
@@ -3440,7 +3467,7 @@ type SigninWithPasskeyInitResponse = {
 
 // @public (undocumented)
 type SigninWithPasskeyRequest = {
-    credential?: AuthenticationResponseJSON;
+    credential?: AuthenticationResponseJSON_2;
     context?: string;
 };
 
@@ -3771,8 +3798,8 @@ type VerifyEmailRequest = operations['verify-email']['requestBody']['content']['
 // Warnings were encountered during analysis:
 //
 // src/streaming.ts:57:3 - (ae-forgotten-export) The symbol "ReconnectingWebSocket" needs to be exported by the entry point index.d.ts
-// src/streaming.types.ts:226:4 - (ae-forgotten-export) The symbol "ReversiUpdateKey" needs to be exported by the entry point index.d.ts
-// src/streaming.types.ts:241:4 - (ae-forgotten-export) The symbol "ReversiUpdateSettings" needs to be exported by the entry point index.d.ts
+// src/streaming.types.ts:245:4 - (ae-forgotten-export) The symbol "ReversiUpdateKey" needs to be exported by the entry point index.d.ts
+// src/streaming.types.ts:260:4 - (ae-forgotten-export) The symbol "ReversiUpdateSettings" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

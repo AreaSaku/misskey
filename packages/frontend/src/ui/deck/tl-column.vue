@@ -103,6 +103,8 @@ async function setType() {
 			value: 'social', label: i18n.ts._timelines.social,
 		}, {
 			value: 'global', label: i18n.ts._timelines.global,
+		}, {
+			value: 'nsfw', label: i18n.ts._timelines.nsfw,
 		}],
 		default: props.column.tl,
 	});

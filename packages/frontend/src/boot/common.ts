@@ -14,6 +14,7 @@ import widgets from '@/widgets/index.js';
 import directives from '@/directives/index.js';
 import components from '@/components/index.js';
 import { themeManager } from '@/theme.js';
+import { isDeviceDarkmode } from '@/utility/is-device-darkmode.js';
 import { i18n } from '@/i18n.js';
 import { refreshCurrentAccount, login } from '@/accounts.js';
 import { store } from '@/store.js';
@@ -105,7 +106,7 @@ export async function common(createVue: () => Promise<App<Element>>) {
 
 	// 一斉リロード
 	reloadChannel.addEventListener('message', path => {
-		if (path !== null) window.location.href = path;
+		if (path.data !== null) window.location.href = path.data;
 		else window.location.reload();
 	});
 
@@ -141,9 +142,16 @@ export async function common(createVue: () => Promise<App<Element>>) {
 	}
 	//#endregion
 
-	//#region WKH: dark mode only
-	store.set('darkMode', true);
-	prefer.commit('syncDeviceDarkMode', false);
+	//#region Sync dark mode
+	if (prefer.s.syncDeviceDarkMode) {
+		store.set('darkMode', isDeviceDarkmode());
+	}
+
+	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (mql) => {
+		if (prefer.s.syncDeviceDarkMode) {
+			store.set('darkMode', mql.matches);
+		}
+	});
 	//#endregion
 
 	if (!isSafeMode) {
@@ -157,14 +165,18 @@ export async function common(createVue: () => Promise<App<Element>>) {
 	// NOTE: この処理は必ずサーバーテーマ適用処理より後に来ること(二重発火を防ぐため)
 	// see: https://github.com/misskey-dev/misskey/issues/16562
 	watch(store.r.darkMode, (darkMode) => {
-		if (!darkMode) {
-			store.set('darkMode', true);
-			return;
-		}
-		themeManager.updateTheme(isSafeMode ? defaultDarkTheme : (prefer.s.darkTheme ?? defaultDarkTheme));
+		const theme = (() => {
+			if (darkMode) {
+				return isSafeMode ? defaultDarkTheme : (prefer.s.darkTheme ?? defaultDarkTheme);
+			} else {
+				return isSafeMode ? defaultLightTheme : (prefer.s.lightTheme ?? defaultLightTheme);
+			}
+		})();
+
+		themeManager.updateTheme(theme);
 	}, { immediate: true });
 
-	window.document.documentElement.dataset.colorScheme = 'dark';
+	window.document.documentElement.dataset.colorScheme = store.s.darkMode ? 'dark' : 'light';
 
 	if (!isSafeMode) {
 		watch(prefer.r.darkTheme, (theme) => {

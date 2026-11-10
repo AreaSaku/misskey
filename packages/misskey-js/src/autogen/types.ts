@@ -3154,6 +3154,15 @@ export type paths = {
          */
         post: operations['notes___mentions'];
     };
+    '/notes/nsfw-timeline': {
+        /**
+         * notes/nsfw-timeline
+         * @description No description provided.
+         *
+         *     **Credential required**: *Yes* / **Permission**: *read:account*
+         */
+        post: operations['notes___nsfw-timeline'];
+    };
     '/notes/polls/recommendation': {
         /**
          * notes/polls/recommendation
@@ -4146,6 +4155,8 @@ export type components = {
             autoSensitive: boolean;
             carefulBot: boolean;
             autoAcceptFollowed: boolean;
+            followApprovalLocalSeconds: number | null;
+            followApprovalRemoteSeconds: number | null;
             noCrawle: boolean;
             preventAiLearning: boolean;
             isExplorable: boolean;
@@ -6689,6 +6700,8 @@ export interface operations {
                      * @default null
                      */
                     userId?: string | null;
+                    /** @default null */
+                    autoArchiveAt?: number | null;
                 };
             };
         };
@@ -6871,6 +6884,8 @@ export interface operations {
                         /** @enum {string} */
                         display: 'normal' | 'banner' | 'dialog';
                         isActive: boolean;
+                        /** Format: date-time */
+                        autoArchiveAt: string | null;
                         forExistingUsers: boolean;
                         silence: boolean;
                         needConfirmationToRead: boolean;
@@ -6944,6 +6959,7 @@ export interface operations {
                     silence?: boolean;
                     needConfirmationToRead?: boolean;
                     isActive?: boolean;
+                    autoArchiveAt?: number | null;
                 };
             };
         };
@@ -24775,7 +24791,6 @@ export interface operations {
                 };
                 content: {
                     'application/json': {
-                        qr: string;
                         url: string;
                         secret: string;
                         label: string;
@@ -27889,6 +27904,8 @@ export interface operations {
                     publicReactions?: boolean;
                     carefulBot?: boolean;
                     autoAcceptFollowed?: boolean;
+                    followApprovalLocalSeconds?: number | null;
+                    followApprovalRemoteSeconds?: number | null;
                     noCrawle?: boolean;
                     preventAiLearning?: boolean;
                     requireSigninToViewContents?: boolean;
@@ -30629,6 +30646,80 @@ export interface operations {
                     sinceDate?: number;
                     untilDate?: number;
                     visibility?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK (with results) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Note'][];
+                };
+            };
+            /** @description Client error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+            /** @description Authentication error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+            /** @description Forbidden error */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+            /** @description I'm Ai */
+            418: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    'application/json': components['schemas']['Error'];
+                };
+            };
+        };
+    };
+    'notes___nsfw-timeline': {
+        requestBody: {
+            content: {
+                'application/json': {
+                    /** @default true */
+                    withRenotes?: boolean;
+                    /** @default 10 */
+                    limit?: number;
+                    /** Format: misskey:id */
+                    sinceId?: string;
+                    /** Format: misskey:id */
+                    untilId?: string;
+                    sinceDate?: number;
+                    untilDate?: number;
                 };
             };
         };

@@ -101,7 +101,6 @@ export function getDriveFileMenu(file: Misskey.entities.DriveFile, folder?: Miss
 		text: i18n.ts.move,
 		icon: 'ti ti-folder-symlink',
 		action: () => move(file),
-
 	}, {
 		text: i18n.ts.describeFile,
 		icon: 'ti ti-text-caption',

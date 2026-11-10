@@ -146,7 +146,6 @@ function showFileMenu(file: Misskey.entities.DriveFile, ev: PointerEvent | Keybo
 		text: i18n.ts.renameFile,
 		icon: 'ti ti-forms',
 		action: () => { rename(file); },
-
 	}, {
 		text: i18n.ts.describeFile,
 		icon: 'ti ti-text-caption',

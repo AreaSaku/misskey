@@ -180,7 +180,6 @@ const emit = defineEmits<{
 }>();
 
 const textareaEl = useTemplateRef('textareaEl');
-const cwInputEl = useTemplateRef('cwInputEl');
 const hashtagsInputEl = useTemplateRef('hashtagsInputEl');
 const visibilityButton = useTemplateRef('visibilityButton');
 const otherSettingsButton = useTemplateRef('otherSettingsButton');
@@ -201,7 +200,7 @@ watch(showAddMfmFunction, () => prefer.commit('enableQuickAddMfmFunction', showA
 const cw = ref<string | null>(null);
 const localOnly = ref(props.initialLocalOnly ?? (prefer.s.rememberNoteVisibility ? store.s.localOnly : prefer.s.defaultNoteLocalOnly));
 const visibility = ref(props.initialVisibility ?? (prefer.s.rememberNoteVisibility ? store.s.visibility : prefer.s.defaultNoteVisibility));
-const visibleUsers = ref<Misskey.entities.UserDetailed[]>([]);
+const visibleUsers = ref<Misskey.entities.UserLite[]>([]);
 if (props.initialVisibleUsers) {
 	props.initialVisibleUsers.forEach(u => pushVisibleUser(u));
 }
@@ -223,7 +222,6 @@ const serverDraftId = ref<string | null>(null);
 const postFormActions = getPluginHandlers('post_form_action');
 
 let textAutocomplete: Autocomplete | null = null;
-let cwAutocomplete: Autocomplete | null = null;
 let hashtagAutocomplete: Autocomplete | null = null;
 
 const uploader = useUploader({
@@ -404,9 +402,7 @@ if (replyTargetNote.value && ['home', 'followers', 'specified'].includes(replyTa
 		}
 
 		if (replyTargetNote.value.userId !== $i.id) {
-			misskeyApi('users/show', { userId: replyTargetNote.value.userId }).then(user => {
-				pushVisibleUser(user);
-			});
+			pushVisibleUser(replyTargetNote.value.user);
 		}
 	}
 }
@@ -681,7 +677,7 @@ function showOtherSettings() {
 }
 //#endregion
 
-function pushVisibleUser(user: Misskey.entities.UserDetailed) {
+function pushVisibleUser(user: Misskey.entities.UserLite) {
 	if (!visibleUsers.value.some(u => u.username === user.username && u.host === user.host)) {
 		visibleUsers.value.push(user);
 	}
@@ -1268,7 +1264,8 @@ async function openAccountMenu(ev: PointerEvent) {
 						};
 					});
 				}
-				if (draft.visibleUserIds) {
+				visibleUsers.value = [];
+				if (draft.visibleUserIds != null && draft.visibleUserIds.length > 0) {
 					misskeyApi('users/show', { userIds: draft.visibleUserIds }).then(users => {
 						users.forEach(u => pushVisibleUser(u));
 					});
@@ -1279,15 +1276,6 @@ async function openAccountMenu(ev: PointerEvent) {
 				reactionAcceptance.value = draft.reactionAcceptance;
 				scheduledAt.value = draft.scheduledAt ?? null;
 				if (draft.channel) targetChannel.value = draft.channel as unknown as Misskey.entities.Channel;
-
-				visibleUsers.value = [];
-				draft.visibleUserIds?.forEach(uid => {
-					if (!visibleUsers.value.some(u => u.id === uid)) {
-						misskeyApi('users/show', { userId: uid }).then(user => {
-							pushVisibleUser(user);
-						});
-					}
-				});
 
 				serverDraftId.value = draft.id;
 			},
@@ -1403,7 +1391,6 @@ onMounted(() => {
 	}
 
 	if (textareaEl.value) textAutocomplete = new Autocomplete(textareaEl.value, text);
-	if (cwInputEl.value) cwAutocomplete = new Autocomplete(cwInputEl.value, cw);
 	if (hashtagsInputEl.value) hashtagAutocomplete = new Autocomplete(hashtagsInputEl.value, hashtags);
 
 	nextTick(() => {
@@ -1465,9 +1452,6 @@ onBeforeUnmount(() => {
 	uploader.abortAll();
 	if (textAutocomplete) {
 		textAutocomplete.detach();
-	}
-	if (cwAutocomplete) {
-		cwAutocomplete.detach();
 	}
 	if (hashtagAutocomplete) {
 		hashtagAutocomplete.detach();

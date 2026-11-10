@@ -61,7 +61,7 @@ export const soundsTypes = [
 	'nagoya/tsurumai-a',
 	'nagoya/tsurumai-k',
 	'nagoya/sakuradori-to',
-	'nagoya/sakuradori-ta',	
+	'nagoya/sakuradori-ta',
 	'syuilo/n-aec',
 	'syuilo/n-cea-4va',
 	'syuilo/n-ea',

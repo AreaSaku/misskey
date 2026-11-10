@@ -21,6 +21,7 @@ export class NsfwTimelineChannel extends Channel {
 	public readonly chName = 'nsfwTimeline';
 	public static shouldShare = false as const;
 	public static requireCredential = true as const;
+	public static kind = 'read:account';
 	private withRenotes: boolean;
 
 	constructor(
@@ -60,14 +61,7 @@ export class NsfwTimelineChannel extends Channel {
 
 		const filtered = await this.noteStreamingHidingService.filter(note, this.user!.id);
 		if (!filtered) return;
-		note = filtered;
-
-		if (isRenotePacked(note) && !isQuotePacked(note) && note.renote && Object.keys(note.renote.reactions).length > 0) {
-			const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renote, this.user!.id);
-			note.renote.myReaction = myRenoteReaction;
-		}
-
-		this.send('note', note);
+		this.send('note', await this.noteEntityService.withMyRenoteReaction(filtered, this.user!.id));
 	}
 
 	@bindThis
