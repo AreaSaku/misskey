@@ -1,6 +1,6 @@
 {
 	"name": "misskey",
-	"version": "2026.11.0-WKH-nsfw-timeline",
+	"version": "2026.11.1-alpha.1-WKH-nsfw-timeline",
 	"codename": "nasubi",
 	"repository": {
 		"type": "git",
