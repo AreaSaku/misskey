@@ -553,10 +553,18 @@ describe('アンテナ', () => {
 				],
 			},
 			{
-				label: 'CWにもマッチする',
+				label: 'ローカルCWのみのキーワードにはマッチしない',
 				parameters: () => ({ keywords: [[keyword]] }),
 				posts: [
-					{ note: (): Promise<Note> => post(bob, { text: 'test', cw: `cw ${keyword}` }), included: true },
+					{
+						note: async (): Promise<Note> => {
+							const note = await post(bob, { text: 'test', cw: `cw ${keyword}` });
+							assert.strictEqual(note.cw, null);
+							return note;
+						},
+						included: false,
+					},
+					{ note: (): Promise<Note> => post(bob, { text: `test ${keyword}` }), included: true },
 				],
 			},
 			{

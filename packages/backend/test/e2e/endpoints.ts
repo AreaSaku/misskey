@@ -71,10 +71,18 @@ describe('Endpoints', () => {
 	});
 
 	describe('signup-pending', () => {
+		let previousEmailDomains: string[] = [];
+
 		beforeAll(async () => {
+			const previousMeta = await api('admin/meta', {}, alice);
+			assert.strictEqual(previousMeta.status, 200);
+			previousEmailDomains = previousMeta.body.bannedEmailDomains ?? [];
+
 			await api('admin/update-meta', {
 				emailRequiredForSignup: true,
 				enableActiveEmailValidation: false,
+				// WKH treats this field as an allowlist; allow only the fixture domain.
+				bannedEmailDomains: ['example.com'],
 			}, alice);
 		});
 
@@ -82,6 +90,7 @@ describe('Endpoints', () => {
 			await api('admin/update-meta', {
 				emailRequiredForSignup: false,
 				enableActiveEmailValidation: true,
+				bannedEmailDomains: previousEmailDomains,
 			}, alice);
 		});
 
